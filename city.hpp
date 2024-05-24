@@ -3,14 +3,23 @@
 #define CITY_HPP
 
 #include "construction.hpp"
+#include "player.hpp"
+#include "tile.hpp"
 
-namespace ariel{
-class City : public Construction {
-public:
-    City(Player& owner, Tile& location);
+namespace ariel {
 
-    bool isSettlement() const override;
-    bool isCity() const override;
-};
-} //namespace ariel
+    class City : public Construction {
+    public:
+        City(Player& owner, Tile& location);  // Constructor declaration
+
+        bool isSettlement() const override;  // Override functions
+        bool isCity() const override;
+
+    private:
+        Player& owner;
+        Tile& location;
+    };
+
+} // namespace ariel
+
 #endif // CITY_HPP

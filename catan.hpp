@@ -14,6 +14,8 @@ private:
     Player* currentPlayer;
 
 public:
+    Catan() = default; // Default constructor
+
     Catan(const Player& p1, const Player& p2, const Player& p3);
     
     void initialize();

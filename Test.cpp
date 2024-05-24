@@ -1,10 +1,29 @@
 //ID: 208018028, Mail: ronimordechai70@gmail.com
+#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
-#include "Algorithms.hpp"
-#include "Graph.hpp"
-#include <sstream>  // Required for std::ostringstream
+#include "catan.hpp"
+#include "player.hpp"
+#include "board.hpp"
+using namespace ariel;
+TEST_CASE("Test placing settlement") {
+    // Create players
+    Player p1("Amit");
+    Player p2("Yossi");
+    Player p3("Dana");
 
-using namespace std;
+    // Create a Catan game instance
+    Catan catan(p1, p2, p3);
+
+    // Get the board of the game
+    Board board = catan.getBoard();
+
+    // Place a settlement for player p1
+    SUBCASE("Player p1 places a settlement") {
+        CHECK_NOTHROW(p1.placeSettlement({"Forest", "Hills"}, {5, 6}, board));
+    }
+}
+
+
 
 // TEST_CASE("Test graph addition")
 // {

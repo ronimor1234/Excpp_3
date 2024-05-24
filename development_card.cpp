@@ -51,4 +51,3 @@ namespace ariel {
 
 } // namespace ariel
 
-#endif // DEVELOPMENT_CARD_HPP

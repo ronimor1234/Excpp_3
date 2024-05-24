@@ -1,6 +1,6 @@
-#//ID: 208018028, Mail: ronimordechai70@gmail.com
-#**note : when i do the commend 'make tidy' i get strange warnings and when i try to fux them it is just caused a mess in the code, so i decided to leave it that way. 
-# Another importent thing is that the valgrind not install correctly to me computer so its not working when i am wirte- 'make valdgind', but in this task there is no need to be a memoery leak becouse there is no dynamic allocation.
+# ID: 208018028, Mail: ronimordechai70@gmail.com
+# Note: When I run 'make tidy', I get strange warnings. Attempting to fix them causes a mess in the code, so I decided to leave it that way.
+# Another important thing is that Valgrind is not installed correctly on my computer, so 'make valgrind' does not work. However, in this task, there should be no memory leaks because there is no dynamic allocation.
 
 # Compiler and flags for C++
 CXX = g++
@@ -13,9 +13,9 @@ VALGRIND_FLAGS = -v --leak-check=full --show-leak-kinds=all --error-exitcode=99
 CLANG_TIDY_FLAGS = -checks='*,-fuchsia-overloaded-operator,-modernize-use-trailing-return-type,-readability-magic-numbers' -warnings-as-errors='-modernize-use-trailing-return-type,-readability-magic-numbers'
 
 # Source files
-DEMO_SOURCES = Demo.cpp catan.cpp board.cpp player.cpp development_card.cpp construction.cpp city.cpp settlement.cpp tile.cpp raod.cpp
-TEST_SOURCES = Test.cpp catan.cpp board.cpp player.cpp development_card.cpp construction.cpp city.cpp settlement.cpp tile.cpp raod.cpp
-MAIN_SOURCES = Main.cpp catan.cpp board.cpp player.cpp development_card.cpp construction.cpp city.cpp settlement.cpp tile.cpp raod.cpp
+DEMO_SOURCES = Demo.cpp catan.cpp board.cpp player.cpp development_card.cpp construction.cpp city.cpp settlement.cpp tile.cpp road.cpp
+TEST_SOURCES = Test.cpp catan.cpp board.cpp player.cpp development_card.cpp construction.cpp city.cpp settlement.cpp tile.cpp road.cpp
+MAIN_SOURCES = Main.cpp catan.cpp board.cpp player.cpp development_card.cpp construction.cpp city.cpp settlement.cpp tile.cpp road.cpp
 
 # Object files derived from source files
 DEMO_OBJECTS = $(DEMO_SOURCES:.cpp=.o)
@@ -23,10 +23,13 @@ TEST_OBJECTS = $(TEST_SOURCES:.cpp=.o)
 MAIN_OBJECTS = $(MAIN_SOURCES:.cpp=.o)
 
 # Build rules
-.PHONY: all clean tidy valgrind  # Targets that don't create files
+.PHONY: all clean tidy valgrind catan # Targets that don't create files
 
-# Default target builds both demo and test
-catan: demo test main
+# Default target builds demo, test, and main
+all: demo test main
+
+# Build the catan target which depends on demo, main, and test
+catan: demo main test
 
 # Build the demo executable
 demo: $(DEMO_OBJECTS)

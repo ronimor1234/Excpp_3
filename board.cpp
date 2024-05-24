@@ -15,7 +15,7 @@ namespace ariel {
         tiles.push_back(ResourceTile("Agricultural Land", 3, Resource::Wheat));
         tiles.push_back(DesertTile("Desert", 4));
         tiles.push_back(ResourceTile("Mountains", 9, Resource::Ore));
-        tiles.push_back(ResourceTile("Pasture Land", 8, Resource::Wool));
+        tiles.push_back(ResourceTile("Pasture Land", 8, Resource::Sheep));
         
         for (auto& tile : tiles) {
             tileMap[tile.getNumber()] = &tile;

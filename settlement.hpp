@@ -2,22 +2,24 @@
 #ifndef SETTLEMENT_HPP
 #define SETTLEMENT_HPP
 
+#include "construction.hpp"
 #include "player.hpp"
 #include "tile.hpp"
 
-namespace ariel{
-    class Player;
-class Settlement {
-private:
-    Player& owner;    // Reference to the player who owns this settlement
-    Tile& location;   // Reference to the tile where this settlement is placed
+namespace ariel {
 
-public:
-    Settlement(Player& owner, Tile& location); // Constructor
+    class Settlement : public Construction {
+    public:
+        Settlement(Player& owner, Tile& location);  // Constructor declaration
 
-    // Getters
-    Player& getOwner() const;   // Returns the player who owns this settlement
-    Tile& getLocation() const;  // Returns the location of this settlement
-};
+        bool isSettlement() const override;  // Override functions
+        bool isCity() const override;
+
+    private:
+        Player& owner;
+        Tile& location;
+    };
+
 } // namespace ariel
+
 #endif // SETTLEMENT_HPP

@@ -11,10 +11,14 @@
 #include "development_card.hpp"
 #include "resource.hpp" 
 #include "board.hpp"
+#include "tile.hpp"
 
 namespace ariel {
+    class Tile;
     class Settlement;
+    class Road;
     class Board;
+
 class Player {
 private:
     std::string name;
@@ -28,7 +32,7 @@ public:
     
     Player() : name("Default Player"), points(0) {}
 
-    Player(const std::string& name) : name(name), points(0) {}
+    Player(const std::string& name);
 
     Player(const char* name) : name(name), points(0) {}
     
@@ -36,14 +40,14 @@ public:
     void placeRoad(const std::vector<std::string>& places, const std::vector<int>& placesNum, Board& board);
     void rollDice();
     void endTurn();
-    void trade(Player& other, Resource give, Resource receive, int giveAmount, int receiveAmount); // Use Resource enum here
+    void trade(Player& other, const std::string& give, const std::string& receive, int giveAmount, int receiveAmount); // Use Resource enum here
     void buyDevelopmentCard(std::shared_ptr<DevelopmentCard> card);
     void printPoints() const;
 
     // Getters and Setters
     std::string getName() const;
     int getPoints() const;
-
+    int getResource(Resource resource) const;
     // Methods to add settlements and roads
     void addSettlement(const std::vector<std::string>& places, const std::vector<int>& placesNum);
     void addRoad(const std::vector<std::string>& places, const std::vector<int>& placesNum);

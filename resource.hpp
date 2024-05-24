@@ -2,14 +2,17 @@
 #ifndef RESOURCE_HPP
 #define RESOURCE_HPP
 
-namespace ariel{
-enum class Resource {
-    Wood,
-    Brick,
-    Wheat,
-    Ore,
-    Wool
-};
+namespace ariel {
+
+    enum class Resource {
+        Wood,
+        Brick,
+        Sheep,
+        Wheat,
+        Ore,
+        None  // Add None as a possible resource
+    };
 
 } // namespace ariel
+
 #endif // RESOURCE_HPP

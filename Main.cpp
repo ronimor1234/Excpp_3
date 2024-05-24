@@ -9,6 +9,7 @@ using namespace std;
 using namespace ariel;
 
 int main() {
+    cout<< "hii"<<endl;
     // // Initialize the game components
     // Board board;
     // Player players[4]; // Assuming 4 players

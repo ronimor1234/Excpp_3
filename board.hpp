@@ -12,8 +12,10 @@
 
 
 namespace ariel {
-    // class Player;  // Forward declaration
-        class Road;
+    class Tile;
+    class Player;
+    class Road;
+    class Settlement;
 class Board {
 private:
     std::vector<Tile> tiles; // vector of a tiles
@@ -30,7 +32,7 @@ public:
     // Methods to place settlements and roads
     bool placeSettlement(Player& player, const std::vector<std::string>& places, const std::vector<int>& placesNum);
     bool placeRoad(Player& player, const std::vector<std::string>& places, const std::vector<int>& placesNum);
-
+    
     // Helper methods
     Tile* getTile(int number);
     bool isValidSettlementPlacement(const std::vector<int>& placesNum);
