@@ -24,7 +24,7 @@ namespace ariel {
 
     bool Board::placeSettlement(Player& player, const std::vector<std::string>& places, const std::vector<int>& placesNum) {
         if (!isValidSettlementPlacement(placesNum)) {
-            return false;
+             throw std::runtime_error("Invalid settlement placement.");
         }
         for (int num : placesNum) {
             settlements.push_back(Settlement(player, *getTile(num)));
@@ -52,15 +52,20 @@ namespace ariel {
     }
 
     bool Board::isValidSettlementPlacement(const std::vector<int>& placesNum) {
-        // Implement the logic to check if the placement is valid
-        // For example, ensure no overlapping settlements and valid locations
         for (int num : placesNum) {
             if (tileMap.find(num) == tileMap.end()) {
-                return false;
+                return false; // Tile number not found, placement is invalid
+            }
+
+            for (const Settlement& settlement : settlements) {
+                if (&settlement.location == getTile(num)) {
+                    return false; // Tile already occupied, placement is invalid
+                }
             }
         }
-        return true;
+        return true; // All tile numbers are valid and not occupied, placement is valid
     }
+
 
     bool Board::isValidRoadPlacement(const std::vector<int>& placesNum) {
         // Implement the logic to check if the placement is valid
@@ -74,10 +79,37 @@ namespace ariel {
     }
 
     void Board::printBoard() const {
-        // Optional: Implement a method to print the current state of the board for debugging
-        for (const Tile& tile : tiles) {
-            std::cout << "Tile: " << tile.getType() << ", Number: " << tile.getNumber() << std::endl;
-        }
+    std::size_t numRows = 7;
+    std::size_t numCols = 7;
+    
+    // Print the top border
+    std::cout << "####### THE BOARD OF THE GAME #######" << std::endl;
+    std::cout << "                    ";
+    for (std::size_t i = 0; i < numCols; ++i) {
+        std::cout << "sea ";
     }
+    std::cout << std::endl;
+
+    // Print the rows
+    for (std::size_t i = 0; i < numRows; ++i) {
+        std::cout << "       ";
+        if (i % 2 == 0) std::cout << " ";
+        for (std::size_t j = 0; j < numCols; ++j) {
+            std::string tileType = tiles[i * numCols + j].getType();
+            int tileNumber = tiles[i * numCols + j].getNumber();
+            std::cout << " " << tileType << "(" << tileNumber << ") ";
+        }
+        std::cout << " sea" << std::endl;
+    }
+
+    // Print the bottom border
+    std::cout << "                    ";
+    for (std::size_t i = 0; i < numCols; ++i) {
+        std::cout << "sea ";
+    }
+    std::cout << std::endl;
+    std::cout << "#####################################" << std::endl;
+}
+
 
 } // namespace ariel

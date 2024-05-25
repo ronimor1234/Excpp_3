@@ -15,29 +15,41 @@ using namespace ariel;
 
 int main()
 {
+    cout << "#### START GAME ####" << endl;
     Player p1("Amit");
     Player p2("Yossi");
     Player p3("Dana");
     Catan catan(p1, p2, p3);
+    cout << "\n";
     // Starting of the game. Every player places two settlements and two roads.
     catan.ChooseStartingPlayer();   // should print the name of the starting player, assume it is Amit.
+    cout << "\n";
     Board board = catan.getBoard(); // get the board of the game.
+    cout << "THE BOARD OF THE GAME: " << endl;
+    board.printBoard();
     vector<string> places1_1 = {"Forest", "Hills"};
     vector<int> placesNum1_1 = {5, 6};
     p1.placeSettlement(places1_1, placesNum1_1, board);
+    cout << "\n";
     p1.placeRoad(places1_1, placesNum1_1, board);
+    cout << "\n";
     vector<string> places1_2 = {"Agricultural Land", "Desert"};
     vector<int> placesNum1_2 = {3, 4};
     p1.placeSettlement(places1_2, placesNum1_2, board);
+    cout << "\n";
     p1.placeRoad(places1_2, placesNum1_2, board); // p1 chooses Forest, hills, Agricultural Land, Desert with numbers 5, 6, 3, 4.
+    cout << "\n";
 
     vector<string> places2_1 = {"Mountains", "Pasture Land"};
     vector<int> placesNum2_1= {4, 9};
     p2.placeSettlement(places2_1, placesNum2_1, board);
+    cout << "\n";
     p2.placeRoad(places2_1, placesNum2_1, board);
+    cout << "\n";
     try
     {
         p3.placeSettlement(places2_1, placesNum2_1, board); // p3 tries to place a settlement in the same location as p2.
+        cout << "\n";
     }
     catch (const std::exception &e)
     {
@@ -46,20 +58,28 @@ int main()
     vector<string> places2_2 = {"Forest", "Pasture Land"};
     vector<int> placesNum2_2 = {5, 9};
     p2.placeSettlement(places2_2, placesNum2_2, board);
+    cout << "\n";
     p2.placeRoad(places2_2, placesNum2_2, board); // p2 chooses Mountains, Pasture Land, and Forest with numbers 4, 9, 5.
-
+    cout << "\n";
+    
     vector<string> places3_1 = {"Mountains", "Pasture Land"};
     vector<int> placesNum3_1 = {3, 8};
     p3.placeSettlement(places3_1, placesNum3_1, board);
+    cout << "\n";
     p3.placeRoad(places3_1, placesNum3_1, board);
+    cout << "\n";
+    
     vector<string> places3_2 = {"Agricultural Land", "Pasture Land"};
     vector<int> placesNum3_2 = {3, 9};
     p3.placeSettlement(places3_2, placesNum3_2, board);
+    cout << "\n";
     p3.placeRoad(places3_2, placesNum3_2, board); // p3 chooses Mountains, Pasture Land, Agricultural Land, Pasture Land with numbers 3, 8, 3, 9.
+    cout << "\n";
 
     // p1 has wood,bricks, and wheat, p2 has wood, ore, and wool, p3 has ore, wool, wheat.
     p1.rollDice();                                    // Lets say it's print 4. Then, p2 gets ore from the mountations.
     p1.placeRoad({"Forest", "Hills"}, {5, 6}, board); // p1 continues to build a road.
+    cout << "\n";
     p1.endTurn();                                     // p1 ends his turn.
 
     p2.rollDice(); // Lets say it's print 9. Then, p3 gets wool from the Pasture Land, p2 gets wool from the Pasture Land.

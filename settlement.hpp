@@ -9,6 +9,8 @@
 namespace ariel {
 
     class Settlement : public Construction {
+    friend class Board; // Declare Board as a friend class
+
     public:
         Settlement(Player& owner, Tile& location);  // Constructor declaration
 

@@ -18,19 +18,38 @@ Player::Player(const std::string& name) : name(name), points(0) {
 }
 
 void Player::placeSettlement(const std::vector<std::string>& places, const std::vector<int>& placesNum, Board& board) {
-    if (board.placeSettlement(*this, places, placesNum)) {
-        addSettlement(places, placesNum);
-        std::cout << name << " placed a settlement." << std::endl;
-        points += 1; // Each settlement is worth 1 point
-    } else {
-        std::cerr << name << " failed to place a settlement." << std::endl;
+    try {
+        if (board.placeSettlement(*this, places, placesNum)) {
+            addSettlement(places, placesNum);
+            std::cout << name << " placed a settlement:" << std::endl;
+            for (size_t i = 0; i < places.size(); ++i) {
+                std::cout << "Place: " << places[i] << ", Number: " << placesNum[i] << std::endl;
+            }
+            points += 1; // Each settlement is worth 1 point
+        } else {
+            throw std::runtime_error("Failed to place settlement."); // Rethrow exception if placement failed
+        }
+    } catch (const std::exception& e) {
+        std::cerr << e.what() << std::endl;
     }
 }
+
 
 void Player::placeRoad(const std::vector<std::string>& places, const std::vector<int>& placesNum, Board& board) {
     if (board.placeRoad(*this, places, placesNum)) {
         addRoad(places, placesNum);
-        std::cout << name << " placed a road." << std::endl;
+        std::cout << name << " placed a road: " << std::endl;
+        std::cout << "Places: ";
+        for (const auto& place : places) {
+            std::cout << place << " ";
+        }
+        std::cout << std::endl;
+
+        std::cout << "Numbers: ";
+        for (const auto& num : placesNum) {
+            std::cout << num << " ";
+        }
+        std::cout << std::endl;
     } else {
         std::cerr << name << " failed to place a road." << std::endl;
     }
@@ -43,7 +62,7 @@ void Player::rollDice() {
 }
 
 void Player::endTurn() {
-    std::cout << name << " ends their turn." << std::endl;
+    std::cout << name << " ends his turn." << std::endl;
 }
 
 void Player::trade(Player& other, const std::string& give, const std::string& receive, int giveAmount, int receiveAmount) {

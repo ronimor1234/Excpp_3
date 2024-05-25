@@ -17,6 +17,7 @@ Catan::Catan(const Player& p1, const Player& p2, const Player& p3) {
 void ariel::Catan::ChooseStartingPlayer() {
     std::size_t index = static_cast<std::size_t>(std::rand()) % players.size();  // Use std::size_t and static_cast
     currentPlayer = &players[index];
+    std::cout << "Starting player: " << currentPlayer->getName() << std::endl;
 }
 
 void Catan::initialize() {
