@@ -18,12 +18,13 @@ namespace ariel {
     class Settlement;
 class Board {
 private:
-    std::vector<Tile> tiles; // vector of a tiles
+    // std::vector<Tile> tiles; // vector of a tiles
     std::map<int, Tile*> tileMap; // For quick lookup by number
     std::vector<Settlement> settlements;
     std::vector<Road> roads;
 
 public:
+    std::vector<Tile> tiles; // vector of a tiles
     Board();
     
     // Method to initialize the board with tiles
@@ -39,7 +40,7 @@ public:
     bool isValidRoadPlacement(const std::vector<int>& placesNum);
 
     // Method to print the current state of the board (optional, for debugging)
-    void printBoard() const;
+    void printBoard(const std::vector<Tile>& tiles); 
 };
 
 } // namespace ariel

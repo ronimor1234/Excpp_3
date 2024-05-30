@@ -24,9 +24,10 @@ int main()
     // Starting of the game. Every player places two settlements and two roads.
     catan.ChooseStartingPlayer();   // should print the name of the starting player, assume it is Amit.
     cout << "\n";
-    Board board = catan.getBoard(); // get the board of the game.
-    cout << "THE BOARD OF THE GAME: " << endl;
-    board.printBoard();
+    Board board;
+    // Board board = catan.getBoard(); // get the board of the game.
+    // cout << "THE BOARD OF THE GAME: " << endl;
+    board.printBoard(board.tiles);
     vector<string> places1_1 = {"Forest", "Hills"};
     vector<int> placesNum1_1 = {5, 6};
     p1.placeSettlement(places1_1, placesNum1_1, board);

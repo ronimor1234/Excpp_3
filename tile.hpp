@@ -17,6 +17,7 @@ namespace ariel {
         Tile(const std::string& type, int number);
         std::string getType() const;
         int getNumber() const;
+        void setNumber(int num) { number = num; }
         virtual Resource produceResource() const;
     };
 

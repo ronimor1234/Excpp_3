@@ -2,6 +2,8 @@
 #include "board.hpp"
 #include "tile.hpp"
 #include <iostream>
+#include <algorithm> // For std::shuffle
+#include <random>    // For std::default_random_engine and std::random_device
 
 namespace ariel {
 
@@ -10,17 +12,38 @@ namespace ariel {
     }
 
     void Board::initializeBoard() {
-        tiles.push_back(ResourceTile("Forest", 5, Resource::Wood));
-        tiles.push_back(ResourceTile("Hills", 6, Resource::Brick));
-        tiles.push_back(ResourceTile("Agricultural Land", 3, Resource::Wheat));
-        tiles.push_back(DesertTile("Desert", 4));
-        tiles.push_back(ResourceTile("Mountains", 9, Resource::Ore));
-        tiles.push_back(ResourceTile("Pasture Land", 8, Resource::Sheep));
-        
-        for (auto& tile : tiles) {
-            tileMap[tile.getNumber()] = &tile;
+    // Clear the tiles vector before adding new tiles
+    tiles.clear();
+
+    // Define the distribution of numbers according to Catan rules
+    std::vector<int> diceNumbers = {2, 3, 3, 4, 4, 5, 5, 6, 6, 8, 8, 9, 9, 10, 10, 11, 11, 12};
+    std::random_device rd;
+    std::default_random_engine rng(rd());
+    std::shuffle(diceNumbers.begin(), diceNumbers.end(), rng);
+
+    // Add tiles in the order of types (e.g., Forest, Hills, Agricultural Land, etc.)
+    for (int i = 0; i < 4; ++i) {
+        tiles.push_back(ResourceTile("Forest", i + 1, Resource::Wood));
+        tiles.push_back(ResourceTile("Hills", i + 5, Resource::Brick));
+        tiles.push_back(ResourceTile("Agricultural Land", i + 9, Resource::Wheat));
+    }
+    for (int i = 0; i < 3; ++i) {
+        tiles.push_back(ResourceTile("Mountains", i + 13, Resource::Ore));
+        tiles.push_back(ResourceTile("Pasture Land", i + 16, Resource::Sheep));
+    }
+    tiles.push_back(DesertTile("Desert", 7)); // i will assume that the number of the desert will be 7 becouse the knight
+
+    // Assign the numbers to the tiles
+    std::size_t diceIndex = 0;
+    for (std::size_t i = 0; i < tiles.size(); ++i) {
+        if (tiles[i].getType() != "Desert") { // Exclude Desert tile
+            tiles[i].setNumber(diceNumbers[diceIndex]); // Set the number for the tile
+            tileMap[diceNumbers[diceIndex]] = &tiles[i]; // Map the number to the tile
+            diceIndex++;
         }
     }
+}
+
 
     bool Board::placeSettlement(Player& player, const std::vector<std::string>& places, const std::vector<int>& placesNum) {
         if (!isValidSettlementPlacement(placesNum)) {
@@ -78,38 +101,48 @@ namespace ariel {
         return true;
     }
 
-    void Board::printBoard() const {
-    std::size_t numRows = 7;
-    std::size_t numCols = 7;
     
-    // Print the top border
-    std::cout << "####### THE BOARD OF THE GAME #######" << std::endl;
-    std::cout << "                    ";
-    for (std::size_t i = 0; i < numCols; ++i) {
-        std::cout << "sea ";
+    void ariel::Board::printBoard(const std::vector<ariel::Tile>& tiles) {
+    if (tiles.size() != 19) {
+        std::cerr << "Error: The number of tiles should be 19 for a Catan board." << std::endl;
+        return;
     }
-    std::cout << std::endl;
+    std::cout << "####### THE BOARD OF THE GAME #######" << std::endl;
+    std::vector<int> rowSizes = {3, 4, 5, 4, 3};
+    size_t tileIndex = 0; // Use size_t for tileIndex to match the type of vector indices
 
-    // Print the rows
-    for (std::size_t i = 0; i < numRows; ++i) {
-        std::cout << "       ";
-        if (i % 2 == 0) std::cout << " ";
-        for (std::size_t j = 0; j < numCols; ++j) {
-            std::string tileType = tiles[i * numCols + j].getType();
-            int tileNumber = tiles[i * numCols + j].getNumber();
-            std::cout << " " << tileType << "(" << tileNumber << ") ";
+    // Top sea row
+    std::cout << "            sea      sea     sea     sea" << std::endl;
+
+    for (std::size_t i = 0; i < rowSizes.size(); ++i) {
+        int numTilesInRow = rowSizes[i];
+        int spacesBeforeRow = 5 - numTilesInRow;
+
+        // Print leading spaces for sea
+        for (int s = 0; s < spacesBeforeRow; ++s) {
+            std::cout << "  ";
         }
+
+        // Print sea at the beginning of the row
+        std::cout << "sea ";
+
+        // Print tiles in the row
+        for (int j = 0; j < numTilesInRow; ++j) {
+            std::string tileType = tiles[tileIndex].getType();
+            int tileNumber = tiles[tileIndex].getNumber();
+            std::cout << " " << tileType << "(" << tileNumber << ") ";
+            tileIndex++;
+        }
+
+        // Print sea at the end of the row
         std::cout << " sea" << std::endl;
     }
 
-    // Print the bottom border
-    std::cout << "                    ";
-    for (std::size_t i = 0; i < numCols; ++i) {
-        std::cout << "sea ";
-    }
-    std::cout << std::endl;
+    // Bottom sea row
+    std::cout << "            sea      sea      sea      sea" << std::endl;
     std::cout << "#####################################" << std::endl;
 }
+
 
 
 } // namespace ariel
