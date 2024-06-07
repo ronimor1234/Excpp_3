@@ -1,5 +1,4 @@
-//ID: 208018028, Mail: ronimordechai70@gmail.com
-// tile.hpp
+// //ID: 208018028, Mail: ronimordechai70@gmail.com
 #ifndef TILE_HPP
 #define TILE_HPP
 
@@ -39,3 +38,4 @@ namespace ariel {
 } // namespace ariel
 
 #endif // TILE_HPP
+

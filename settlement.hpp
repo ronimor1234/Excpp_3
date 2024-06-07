@@ -2,26 +2,19 @@
 #ifndef SETTLEMENT_HPP
 #define SETTLEMENT_HPP
 
-#include "construction.hpp"
-#include "player.hpp"
-#include "tile.hpp"
+#include <string>
 
 namespace ariel {
+    class Settlement {
+        public:
+        Settlement(const std::string& place, int placeNum);
 
-    class Settlement : public Construction {
-    friend class Board; // Declare Board as a friend class
+        const std::string& getPlace() const;
+        int getPlaceNum() const;
 
-    public:
-        Settlement(Player& owner, Tile& location);  // Constructor declaration
-
-        bool isSettlement() const override;  // Override functions
-        bool isCity() const override;
-
-    private:
-        Player& owner;
-        Tile& location;
+        private:
+            std::string place;
+            int placeNum;
     };
-
-} // namespace ariel
-
-#endif // SETTLEMENT_HPP
+} //namespace ariel
+#endif

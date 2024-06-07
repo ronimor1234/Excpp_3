@@ -1,4 +1,4 @@
-//ID: 208018028, Mail: ronimordechai70@gmail.com
+// //ID: 208018028, Mail: ronimordechai70@gmail.com
 #include "player.hpp"
 #include "board.hpp"
 #include "settlement.hpp"
@@ -19,7 +19,8 @@ Player::Player(const std::string& name) : name(name), points(0) {
 
 void Player::placeSettlement(const std::vector<std::string>& places, const std::vector<int>& placesNum, Board& board) {
     try {
-        if (board.placeSettlement(*this, places, placesNum)) {
+        if (canPlaceSettlement(places, placesNum, board)) {
+            // Place settlement
             addSettlement(places, placesNum);
             std::cout << name << " placed a settlement:" << std::endl;
             for (size_t i = 0; i < places.size(); ++i) {
@@ -27,32 +28,100 @@ void Player::placeSettlement(const std::vector<std::string>& places, const std::
             }
             points += 1; // Each settlement is worth 1 point
         } else {
-            throw std::runtime_error("Failed to place settlement."); // Rethrow exception if placement failed
+            throw std::runtime_error("Failed to place settlement. Location already occupied or not adjacent to a road.");
         }
     } catch (const std::exception& e) {
         std::cerr << e.what() << std::endl;
     }
 }
 
+bool Player::canPlaceSettlement(const std::vector<std::string>& places, const std::vector<int>& placesNum, const Board& board) const {
+    // Check if all places are available and adjacent to player's roads
+    for (size_t i = 0; i < places.size(); ++i) {
+        auto key = std::make_pair(places[i], placesNum[i]);
+        
+        // Check if the place is already occupied
+        if (board.isPlaceOccupied(places[i], placesNum[i])) {
+            return false;
+        }
+
+        // Check if the place is adjacent to a road of the player
+        bool connected = false;
+        for (const auto& connection : roadConnections) {
+            if (board.areAdjacent(key, connection)) {
+                connected = true;
+                break;
+            }
+        }
+        if (!connected) {
+            return false;
+        }
+    }
+    return true;
+}
+
 
 void Player::placeRoad(const std::vector<std::string>& places, const std::vector<int>& placesNum, Board& board) {
-    if (board.placeRoad(*this, places, placesNum)) {
-        addRoad(places, placesNum);
-        std::cout << name << " placed a road: " << std::endl;
-        std::cout << "Places: ";
-        for (const auto& place : places) {
-            std::cout << place << " ";
-        }
-        std::cout << std::endl;
+    if (canPlaceRoad(places, placesNum, board)) {
+        if (board.placeRoad(*this, places, placesNum)) {
+            addRoad(places, placesNum);
+            std::cout << name << " placed a road:" << std::endl;
+            std::cout << "Places: ";
+            for (const auto& place : places) {
+                std::cout << place << " ";
+            }
+            std::cout << std::endl;
 
-        std::cout << "Numbers: ";
-        for (const auto& num : placesNum) {
-            std::cout << num << " ";
+            std::cout << "Numbers: ";
+            for (const auto& num : placesNum) {
+                std::cout << num << " ";
+            }
+            std::cout << std::endl;
+        } else {
+            std::cerr << name << " failed to place a road." << std::endl;
         }
-        std::cout << std::endl;
     } else {
-        std::cerr << name << " failed to place a road." << std::endl;
+        std::cerr << name << " cannot place a road at the specified location." << std::endl;
     }
+}
+
+bool Player::canPlaceRoad(const std::vector<std::string>& places, const std::vector<int>& placesNum, const Board& board) const {
+    if (places.size() != placesNum.size()) {
+        return false; // Should have the same number of places and place numbers
+    }
+
+    for (size_t i = 0; i < places.size(); ++i) {
+        auto key = std::make_pair(places[i], placesNum[i]);
+        
+        // Check if the place is occupied by another player
+        if (!board.isPlaceOccupied(places[i], placesNum[i])) {
+            return false;
+        }
+
+        // Check if the player has a road connection to this place
+        if (roadConnections.find(key) == roadConnections.end()) {
+            return false;
+        }
+
+        // Check if the road can be placed adjacent to another road
+        bool connected = false;
+        for (const auto& connection : roadConnections) {
+            if (board.areAdjacent(key, connection)) {
+                connected = true;
+                break;
+            }
+        }
+        if (!connected) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+
+const std::set<std::pair<std::string, int>>& Player::getRoadConnections() const {
+    return roadConnections;
 }
 
 void Player::rollDice() {
@@ -120,22 +189,30 @@ void Player::removeResource(Resource resource, int amount) {
 }
 
 void Player::addSettlement(const std::vector<std::string>& places, const std::vector<int>& placesNum) {
-    (void)places; // Suppress unused parameter warning
-    (void)placesNum; // Suppress unused parameter warning
-
-    // Example with dummy Tile object (replace with actual logic)
-    Tile dummyTile("dummy", 1);  // Replace with actual Tile object creation
-    Settlement settlement(*this, dummyTile);
+    for (size_t i = 0; i < places.size(); ++i) {
+        Settlement settlement(places[i], placesNum[i]);
+        settlements.push_back(settlement);
+    }
 }
 
 void Player::addRoad(const std::vector<std::string>& places, const std::vector<int>& placesNum) {
-     (void)places; // Suppress unused parameter warning
-    (void)placesNum; // Suppress unused parameter warning
+    for (size_t i = 0; i < places.size(); ++i) {
+        roadConnections.insert(std::make_pair(places[i], placesNum[i]));
+    }
+}
 
-    // Example with dummy Tile objects (replace with actual logic)
-    Tile dummyStartTile("start", 1);  // Replace with actual Tile object creation
-    Tile dummyEndTile("end", 2);    // Replace with actual Tile object creation
-    Road road(*this, dummyStartTile, dummyEndTile);
+std::set<std::pair<std::string, int>> Player::getSettlementLocations() const {
+    std::set<std::pair<std::string, int>> locations;
+    for (const auto& settlement : settlements) {
+        locations.insert(std::make_pair(settlement.getPlace(), settlement.getPlaceNum()));
+    }
+    return locations;
+}
+
+std::set<std::pair<std::string, int>> Player::getSettlements() const {
+    return getSettlementLocations();
 }
 
 } // namespace ariel
+
+

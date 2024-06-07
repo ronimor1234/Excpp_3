@@ -1,9 +1,10 @@
-//ID: 208018028, Mail: ronimordechai70@gmail.com
+// //ID: 208018028, Mail: ronimordechai70@gmail.com
 #include "board.hpp"
 #include "tile.hpp"
 #include <iostream>
 #include <algorithm> // For std::shuffle
 #include <random>    // For std::default_random_engine and std::random_device
+#include <unordered_set>
 
 namespace ariel {
 
@@ -12,59 +13,112 @@ namespace ariel {
     }
 
     void Board::initializeBoard() {
-    // Clear the tiles vector before adding new tiles
-    tiles.clear();
+        // Clear the tiles vector before adding new tiles
+        tiles.clear();
+        tileMap.clear();
 
-    // Define the distribution of numbers according to Catan rules
-    std::vector<int> diceNumbers = {2, 3, 3, 4, 4, 5, 5, 6, 6, 8, 8, 9, 9, 10, 10, 11, 11, 12};
-    std::random_device rd;
-    std::default_random_engine rng(rd());
-    std::shuffle(diceNumbers.begin(), diceNumbers.end(), rng);
+        // Define the fixed positions and numbers for the tiles according to Catan rules
+        std::vector<std::pair<std::string, int>> fixedTiles = {
+            {"Forest", 5}, {"Hills", 2}, {"Agricultural Land", 6}, {"Pasture Land", 3}, {"Forest", 8},
+            {"Mountains", 10}, {"Agricultural Land", 9}, {"Forest", 12}, {"Pasture Land", 11}, {"Forest", 4},
+            {"Desert", 7}, {"Mountains", 8}, {"Agricultural Land", 3}, {"Pasture Land", 4}, {"Mountains", 5},
+            {"Hills", 6}, {"Pasture Land", 9}, {"Agricultural Land", 10}, {"Forest", 11}
+        };
 
-    // Add tiles in the order of types (e.g., Forest, Hills, Agricultural Land, etc.)
-    for (int i = 0; i < 4; ++i) {
-        tiles.push_back(ResourceTile("Forest", i + 1, Resource::Wood));
-        tiles.push_back(ResourceTile("Hills", i + 5, Resource::Brick));
-        tiles.push_back(ResourceTile("Agricultural Land", i + 9, Resource::Wheat));
-    }
-    for (int i = 0; i < 3; ++i) {
-        tiles.push_back(ResourceTile("Mountains", i + 13, Resource::Ore));
-        tiles.push_back(ResourceTile("Pasture Land", i + 16, Resource::Sheep));
-    }
-    tiles.push_back(DesertTile("Desert", 7)); // i will assume that the number of the desert will be 7 becouse the knight
+        for (const auto& tile : fixedTiles) {
+            if (tile.first == "Desert") {
+                tiles.push_back(Tile(tile.first, tile.second)); // Use Tile for Desert
+            } else if (tile.first == "Forest") {
+                tiles.push_back(ResourceTile(tile.first, tile.second, Resource::Wood));
+            } else if (tile.first == "Hills") {
+                tiles.push_back(ResourceTile(tile.first, tile.second, Resource::Brick));
+            } else if (tile.first == "Agricultural Land") {
+                tiles.push_back(ResourceTile(tile.first, tile.second, Resource::Wheat));
+            } else if (tile.first == "Mountains") {
+                tiles.push_back(ResourceTile(tile.first, tile.second, Resource::Ore));
+            } else if (tile.first == "Pasture Land") {
+                tiles.push_back(ResourceTile(tile.first, tile.second, Resource::Sheep));
+            }
 
-    // Assign the numbers to the tiles
-    std::size_t diceIndex = 0;
-    for (std::size_t i = 0; i < tiles.size(); ++i) {
-        if (tiles[i].getType() != "Desert") { // Exclude Desert tile
-            tiles[i].setNumber(diceNumbers[diceIndex]); // Set the number for the tile
-            tileMap[diceNumbers[diceIndex]] = &tiles[i]; // Map the number to the tile
-            diceIndex++;
+            if (tile.first != "Desert") {
+                tileMap[tile.second] = &tiles.back(); // Map the number to the tile
+            }
         }
     }
-}
-
 
     bool Board::placeSettlement(Player& player, const std::vector<std::string>& places, const std::vector<int>& placesNum) {
-        if (!isValidSettlementPlacement(placesNum)) {
-             throw std::runtime_error("Invalid settlement placement.");
+        for (size_t i = 0; i < places.size(); ++i) {
+            auto key = std::make_pair(places[i], placesNum[i]);
+            // Check if the place is occupied or within two edges of another settlement
+            for (const auto& entry : occupiedPlaces) {
+                if (entry.second != player.getName() && isWithinTwoEdges(key, entry.first)) {
+                    return false; // Place is within two edges of another settlement
+                }
+            }
         }
-        for (int num : placesNum) {
-            settlements.push_back(Settlement(player, *getTile(num)));
+        for (size_t i = 0; i < places.size(); ++i) {
+            auto key = std::make_pair(places[i], placesNum[i]);
+            occupiedPlaces[key] = player.getName();
         }
-        player.addSettlement(places, placesNum);
         return true;
     }
 
-    bool Board::placeRoad(Player& player, const std::vector<std::string>& places, const std::vector<int>& placesNum) {
-        if (!isValidRoadPlacement(placesNum)) {
-            return false;
+    bool Board::placeRoad(const Player& player, const std::vector<std::string>& places, const std::vector<int>& placesNum) {
+        const auto& roadConnections = player.getRoadConnections();
+
+        for (size_t i = 0; i < places.size(); ++i) {
+            auto key = std::make_pair(places[i], placesNum[i]);
+            if (occupiedPlaces.find(key) != occupiedPlaces.end()) {
+                if (occupiedPlaces[key] != player.getName()) {
+                    return false; // Place is already occupied by another player
+                }
+            } else {
+                bool connected = false;
+                // Check if the new road is connected to any of the player's existing roads or settlements
+                for (const auto& connection : roadConnections) {
+                    if (areAdjacent(key, connection)) {
+                        connected = true;
+                        break;
+                    }
+                }
+                if (!connected) {
+                    // Optionally, check if the road is connected to any of the player's settlements
+                    for (const auto& settlement : player.getSettlements()) {
+                        if (areAdjacent(key, settlement)) {
+                            connected = true;
+                            break;
+                        }
+                    }
+                }
+                if (!connected) {
+                    return false; // New road is not connected to existing roads or settlements
+                }
+            }
         }
-        for (size_t i = 0; i < placesNum.size() - 1; ++i) {
-            roads.push_back(Road(player, *getTile(placesNum[i]), *getTile(placesNum[i + 1])));
+
+        for (size_t i = 0; i < places.size(); ++i) {
+            auto key = std::make_pair(places[i], placesNum[i]);
+            occupiedPlaces[key] = player.getName();
         }
-        player.addRoad(places, placesNum);
+
         return true;
+    }
+
+    bool Board::isPlaceOccupied(const std::string& place, int placeNum) const {
+        auto key = std::make_pair(place, placeNum);
+        return occupiedPlaces.find(key) != occupiedPlaces.end();
+    }
+
+    bool Board::areAdjacent(const std::pair<std::string, int>& a, const std::pair<std::string, int>& b) const {
+        // Implement logic to check if places a and b are adjacent
+        // This logic is simplified and might need to be adapted based on the board structure
+        return abs(a.second - b.second) == 1;
+    }
+
+    bool Board::isWithinTwoEdges(const std::pair<std::string, int>& a, const std::pair<std::string, int>& b) const {
+        // Implement logic to check if places a and b are within two edges of each other
+        // This logic is simplified and might need to be adapted based on the board structure
+        return abs(a.second - b.second) <= 2;
     }
 
     Tile* Board::getTile(int number) {
@@ -74,34 +128,7 @@ namespace ariel {
         return nullptr;
     }
 
-    bool Board::isValidSettlementPlacement(const std::vector<int>& placesNum) {
-        for (int num : placesNum) {
-            if (tileMap.find(num) == tileMap.end()) {
-                return false; // Tile number not found, placement is invalid
-            }
 
-            for (const Settlement& settlement : settlements) {
-                if (&settlement.location == getTile(num)) {
-                    return false; // Tile already occupied, placement is invalid
-                }
-            }
-        }
-        return true; // All tile numbers are valid and not occupied, placement is valid
-    }
-
-
-    bool Board::isValidRoadPlacement(const std::vector<int>& placesNum) {
-        // Implement the logic to check if the placement is valid
-        // For example, ensure roads are connected correctly
-        for (int num : placesNum) {
-            if (tileMap.find(num) == tileMap.end()) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    
     void ariel::Board::printBoard(const std::vector<ariel::Tile>& tiles) {
     if (tiles.size() != 19) {
         std::cerr << "Error: The number of tiles should be 19 for a Catan board." << std::endl;
@@ -146,3 +173,4 @@ namespace ariel {
 
 
 } // namespace ariel
+

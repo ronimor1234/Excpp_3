@@ -1,7 +1,7 @@
-//ID: 208018028, Mail: ronimordechai70@gmail.com
+// //ID: 208018028, Mail: ronimordechai70@gmail.com
 #ifndef PLAYER_HPP
 #define PLAYER_HPP
-
+#include <set>
 #include <string>
 #include <vector>
 #include <memory>
@@ -27,7 +27,8 @@ private:
     std::map<Resource, int> resources; 
     std::vector<std::shared_ptr<DevelopmentCard>> developmentCards;
     int points;
-
+    std::set<std::pair<std::string, int>> roadConnections;
+    
 public:
     
     Player() : name("Default Player"), points(0) {}
@@ -37,7 +38,9 @@ public:
     Player(const char* name) : name(name), points(0) {}
     
     void placeSettlement(const std::vector<std::string>& places, const std::vector<int>& placesNum, Board& board);
+    bool canPlaceSettlement(const std::vector<std::string>& places, const std::vector<int>& placesNum, const Board& board) const;
     void placeRoad(const std::vector<std::string>& places, const std::vector<int>& placesNum, Board& board);
+    bool canPlaceRoad(const std::vector<std::string>& places, const std::vector<int>& placesNum, const Board& board) const;
     void rollDice();
     void endTurn();
     void trade(Player& other, const std::string& give, const std::string& receive, int giveAmount, int receiveAmount); // Use Resource enum here
@@ -51,6 +54,10 @@ public:
     // Methods to add settlements and roads
     void addSettlement(const std::vector<std::string>& places, const std::vector<int>& placesNum);
     void addRoad(const std::vector<std::string>& places, const std::vector<int>& placesNum);
+
+    const std::set<std::pair<std::string, int>>& getRoadConnections() const;
+    std::set<std::pair<std::string, int>> getSettlementLocations() const;
+    std::set<std::pair<std::string, int>> getSettlements() const;
 
     // Resource management
     void addResource(Resource resource, int amount);

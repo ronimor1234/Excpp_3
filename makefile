@@ -13,9 +13,9 @@ VALGRIND_FLAGS = -v --leak-check=full --show-leak-kinds=all --error-exitcode=99
 CLANG_TIDY_FLAGS = -checks='*,-fuchsia-overloaded-operator,-modernize-use-trailing-return-type,-readability-magic-numbers' -warnings-as-errors='-modernize-use-trailing-return-type,-readability-magic-numbers'
 
 # Source files
-DEMO_SOURCES = Demo.cpp catan.cpp board.cpp player.cpp development_card.cpp construction.cpp city.cpp settlement.cpp tile.cpp road.cpp
-TEST_SOURCES = Test.cpp catan.cpp board.cpp player.cpp development_card.cpp construction.cpp city.cpp settlement.cpp tile.cpp road.cpp
-MAIN_SOURCES = Main.cpp catan.cpp board.cpp player.cpp development_card.cpp construction.cpp city.cpp settlement.cpp tile.cpp road.cpp
+DEMO_SOURCES = Demo.cpp catan.cpp board.cpp player.cpp development_card.cpp city.cpp settlement.cpp tile.cpp road.cpp
+TEST_SOURCES = Test.cpp catan.cpp board.cpp player.cpp development_card.cpp city.cpp settlement.cpp tile.cpp road.cpp
+MAIN_SOURCES = Main.cpp catan.cpp board.cpp player.cpp development_card.cpp city.cpp settlement.cpp tile.cpp road.cpp
 
 # Object files derived from source files
 DEMO_OBJECTS = $(DEMO_SOURCES:.cpp=.o)

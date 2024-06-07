@@ -1,23 +1,24 @@
 //ID: 208018028, Mail: ronimordechai70@gmail.com
+
 #ifndef CITY_HPP
 #define CITY_HPP
 
-#include "construction.hpp"
-#include "player.hpp"
-#include "tile.hpp"
 
 namespace ariel {
 
-    class City : public Construction {
-    public:
-        City(Player& owner, Tile& location);  // Constructor declaration
+    class Player; // Forward declaration
 
-        bool isSettlement() const override;  // Override functions
-        bool isCity() const override;
+    class Tile; // Forward declaration
 
+    class City {
     private:
         Player& owner;
         Tile& location;
+
+    public:
+        City(Player& owner, Tile& location);  // Constructor declaration
+        bool isSettlement() const;  // Function declaration
+        bool isCity() const;  // Function declaration
     };
 
 } // namespace ariel

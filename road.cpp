@@ -2,14 +2,6 @@
 #include "road.hpp"
 
 namespace ariel{
-// Road::Road(Player& owner, Tile& start, Tile& end) : owner(owner), start(start), end(end) {
-//     start.addRoad(this);
-//     end.addRoad(this);
-// }
-
-// Player& Road::getOwner() const {
-//     return owner;
-// }
 
 Tile& Road::getStart() const {
     return start;

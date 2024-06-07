@@ -1,17 +1,15 @@
 //ID: 208018028, Mail: ronimordechai70@gmail.com
+
 #include "settlement.hpp"
+using namespace ariel;
 
-namespace ariel {
+Settlement::Settlement(const std::string& place, int placeNum) : place(place), placeNum(placeNum) {}
 
-    Settlement::Settlement(Player& owner, Tile& location)
-        : Construction(owner, location, 1), owner(owner), location(location) {}
+const std::string& Settlement::getPlace() const {
+    return place;
+}
 
-    bool Settlement::isSettlement() const {
-        return true;
-    }
+int Settlement::getPlaceNum() const {
+    return placeNum;
+}
 
-    bool Settlement::isCity() const {
-        return false;
-    }
-
-} // namespace ariel

@@ -1,17 +1,20 @@
 //ID: 208018028, Mail: ronimordechai70@gmail.com
 #include "city.hpp"
+#include "player.hpp"
+#include "tile.hpp"
 
 namespace ariel {
 
     City::City(Player& owner, Tile& location)
-        : Construction(owner, location, 2), owner(owner), location(location) {}
+        : owner(owner), location(location) {
+    }
 
     bool City::isSettlement() const {
-        return false;
+        return false; 
     }
 
     bool City::isCity() const {
-        return true;
+        return true; 
     }
 
 } // namespace ariel
