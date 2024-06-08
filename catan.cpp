@@ -24,29 +24,17 @@ void Catan::ChooseStartingPlayer() {
     std::cout << "Starting player: " << startingPlayer->getName() << std::endl;
 }
 
-void Catan::placeInitialSettlement(Player& player, const std::vector<std::string>& places, const std::vector<int>& placesNum, Board& board) {
-        std::cout << player.getName() << " placing initial settlement and road:" << std::endl;
-        player.placeSettlement(places, placesNum, board);
-        
-        // For placeRoad, pass only the first two places and their numbers- for case that he will put a settlement just on 2 tiles and not 3.
-        std::vector<std::string> roadPlaces = {places[0], places[1]};
-        std::vector<int> roadPlacesNum = {placesNum[0], placesNum[1]};
-        player.placeRoad(roadPlaces, roadPlacesNum, board);
-        
-        std::cout << player.getName() << " placed settlement and road successfully." << std::endl;
-    }
+void Catan::placeInitialSettlement(Player& player, int settlementPoint, int roadPoint, Board& board) {
+    std::cout << player.getName() << " placing initial settlement and road:" << std::endl;
+    player.placeSettlement(settlementPoint, board);
+    player.placeRoad(settlementPoint, roadPoint, board);
+}
 
-    void Catan::placeSecondSettlement(Player& player, const std::vector<std::string>& places, const std::vector<int>& placesNum, Board& board) {
-        std::cout << player.getName() << " placing second settlement and road:" << std::endl;
-        player.placeSettlement(places, placesNum, board);
-        
-        // For placeRoad, pass only the first two places and their numbers- for case that he will put a settlement just on 2 tiles and not 3.
-        std::vector<std::string> roadPlaces = {places[0], places[1]};
-        std::vector<int> roadPlacesNum = {placesNum[0], placesNum[1]};
-        player.placeRoad(roadPlaces, roadPlacesNum, board);
-        
-        std::cout << player.getName() << " placed settlement and road successfully." << std::endl;
-    }
+void Catan::placeSecondSettlement(Player& player, int settlementPoint, int roadPoint, Board& board) {
+    std::cout << player.getName() << " placing second settlement and road:" << std::endl;
+    player.placeSettlement(settlementPoint, board);
+    player.placeRoad(settlementPoint, roadPoint, board);
+}
 
 
 void Catan::initialize() {
@@ -77,6 +65,19 @@ void Catan::printWinner() {
         std::cout << "No winner yet." << std::endl;
     }
 }
+
+void Catan::addCityToPlayer(Player& player, int point, Board& board) {
+    std::cout << player.getName() << " adding a city at point " << point << ":" << std::endl;
+
+    // Check if a city can be added at the specified point on the board
+    if (board.canAddCity(point)) {
+        player.addCity(point);
+    } else {
+        std::cerr << "Cannot add city at point " << point << ": invalid location or conditions." << std::endl;
+    }
+}
+
+
 } //namesapace ariel
 
 

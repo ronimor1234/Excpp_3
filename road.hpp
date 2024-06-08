@@ -2,26 +2,27 @@
 #ifndef ROAD_HPP
 #define ROAD_HPP
 
-#include "player.hpp"
-#include "tile.hpp"
-#include "board.hpp"
+#include <string>
 
-namespace ariel{
-    class Player;  // Forward declaration
-class Road {
-private:
-    Player& owner;
-    Tile& start;
-    Tile& end;
+namespace ariel {
+    class Player; // Forward declaration
+    class Tile;   // Forward declaration
 
-public:
-     Road(Player& owner, Tile& start, Tile& end)
-            : owner(owner), start(start), end(end) {}
+    class Road {
+    private:
+        const Player& owner;
+        Tile& start;
+        Tile& end;
 
-    // Getters
-    Player& getOwner() const{ return owner; }
-    Tile& getStart() const;
-    Tile& getEnd() const;
-};
+    public:
+        Road(const Player& owner, Tile& start, Tile& end);
+        // bool isConnectedTo(const std::string& place, int placeNum) const;
+        // Getters
+        
+        Tile& getStart() const;
+        Tile& getEnd() const;
+    };
+
 } // namespace ariel
+
 #endif // ROAD_HPP

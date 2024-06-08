@@ -27,8 +27,8 @@ namespace ariel {
         // Method to choose the starting player
         void ChooseStartingPlayer();
 
-        void placeInitialSettlement(Player& player, const std::vector<std::string>& places, const std::vector<int>& placesNum, Board& board);
-        void placeSecondSettlement(Player& player, const std::vector<std::string>& places, const std::vector<int>& placesNum, Board& board);
+        void placeInitialSettlement(Player& player, int settlementPoint, int roadPoint, Board& board);
+        void placeSecondSettlement(Player& player, int settlementPoint, int roadPoint, Board& board);
     
         // Getter for starting player
         Player* getStartingPlayer() const { return startingPlayer; }
@@ -38,6 +38,10 @@ namespace ariel {
 
         // Method to print the winner
         void printWinner();
+
+        // Method to add city
+        void addCityToPlayer(Player& player, int point, Board& board);
+        
         };
 } // namespace ariel
 #endif // CATAN_HPP

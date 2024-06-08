@@ -6,15 +6,20 @@
 
 namespace ariel {
     class Settlement {
-        public:
-        Settlement(const std::string& place, int placeNum);
-
-        const std::string& getPlace() const;
-        int getPlaceNum() const;
-
         private:
             std::string place;
             int placeNum;
+            int point;
+            bool isCity;
+        
+        public:
+        Settlement(const std::string& place, int placeNum);
+        // bool isConnectedTo(const std::string& place, int placeNum) const;
+        const std::string& getPlace() const;
+        int getPlaceNum() const;
+        int getPoint() const { return point; }
+        bool getIsCity() const;
+        void setIsCity(bool isCity);
     };
 } //namespace ariel
 #endif
