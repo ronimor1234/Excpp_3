@@ -210,8 +210,16 @@ int main() {
 
         // Player 2 turn
         p2.rollDice(); // Let's say it's 9.
-        // std::shared_ptr<ariel::DevelopmentCard> card = std::make_shared<ariel::VictoryPointCard>();
-        // p2.buyDevelopmentCard(card);
+        p2.addResource(Resource::Ore, 1);
+        p2.addResource(Resource::Sheep, 1);
+        p2.addResource(Resource::Wheat, 1);
+        p2.buyDevelopmentCard();
+        try {
+            p2.useDevelopmentCard("Victory Point", catan);
+            cout << "Player " << p2.getName() << " used a development card." << endl;
+        } catch (const std::invalid_argument& e) {
+            cerr << "Cannot use development card: " << e.what() << endl;
+        }
         p2.endTurn();
 
        

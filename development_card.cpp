@@ -190,8 +190,8 @@ void KnightCard::applyEffect(Player& /*player*/, Catan& /*game*/) {
 //     return "Victory Point";
 // }
 
-void VictoryPointCard::applyEffect(Player& /*player*/, Catan& /*game*/) {
-    // Implement Victory Point's effect here
+void VictoryPointCard::applyEffect(Player& player, Catan& /*game*/) {
+    player.addPoints(1);
 }
 
 } // namespace ariel
