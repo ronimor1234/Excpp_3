@@ -67,16 +67,47 @@ void Catan::printWinner() {
 }
 
 void Catan::addCityToPlayer(Player& player, int point, Board& board) {
-    std::cout << player.getName() << " adding a city at point " << point << ":" << std::endl;
+    std::cout << player.getName() << " want to buy city at point " << point << ":" << std::endl;
 
     // Check if a city can be added at the specified point on the board
     if (board.canAddCity(point)) {
-        player.addCity(point);
+        player.addCity(point, board);
     } else {
         std::cerr << "Cannot add city at point " << point << ": invalid location or conditions." << std::endl;
     }
 }
 
+void Catan::collectMonopolyResources(Player& player, Resource chosenResource) {
+    // Loop through all tiles and collect resources of the chosen type
+    Board& gameBoard = board;
+    // Convert Resource enum to string
+    std::string chosenResourceStr;
+    switch (chosenResource) {
+        case Resource::Brick:
+            chosenResourceStr = "Brick";
+            break;
+        case Resource::Wood:
+            chosenResourceStr = "Wood";
+            break;
+        case Resource::Sheep:
+            chosenResourceStr = "Sheep";
+            break;
+        case Resource::Wheat:
+            chosenResourceStr = "Wheat";
+            break;
+        case Resource::Ore:
+            chosenResourceStr = "Ore";
+            break;
+        // Add other cases for each resource type
+    }
+
+    // Loop through all tiles and collect resources of the chosen type
+    for (Tile& tile : gameBoard.tiles) {
+        if (tile.getType() == chosenResourceStr) {
+            player.addResource(chosenResource,1);
+        }
+    }
+}
 
 } //namesapace ariel
 

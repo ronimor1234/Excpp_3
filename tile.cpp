@@ -67,7 +67,7 @@ namespace ariel {
     }
 
     Resource Tile::produceResource() const {
-        return Resource::None;  // Default implementation for base class
+        return Resource::Brick;  // Default implementation for base class
     }
 
     void Tile::addFixedPoints(const std::vector<int>& fixedPoints) {
@@ -94,7 +94,7 @@ namespace ariel {
     }
 
     Resource DesertTile::produceResource() const {
-        return Resource::None;
+        return Resource::Brick;
     }
 
 } // namespace ariel

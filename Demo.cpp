@@ -133,6 +133,7 @@
 #include "player.hpp"
 #include "board.hpp"
 #include "development_card.hpp"
+#include "resource.hpp"
 
 using namespace std;
 using namespace ariel;
@@ -152,6 +153,7 @@ int main() {
 
     // Starting the game. Every player places two settlements and two roads.
     catan.ChooseStartingPlayer();   // Assume it's Amit.
+    std::cout << std::endl;
     cout << "\n";
 
     // Create the board
@@ -163,11 +165,11 @@ int main() {
 
     
     // First player places initial settlement and roads
-    catan.placeInitialSettlement(p1, 41, 42, board); // Settlement at 41, Road from 41 to 43
+    catan.placeInitialSettlement(p1, 41, 42, board); // Settlement at 41, Road from 41 to 42
     cout << "\n";
 
     // Second player places initial settlement and roads
-    catan.placeInitialSettlement(p2, 26, 27, board); // Settlement at 26, Road from 26 to 28
+    catan.placeInitialSettlement(p2, 26, 27, board); // Settlement at 26, Road from 26 to 27
     cout << "\n";
 
     // Third player places initial settlement and roads
@@ -175,13 +177,13 @@ int main() {
     cout << "\n";
 
     // Second settlements
-    catan.placeSecondSettlement(p1, 44, 45, board); // Settlement at 43, Road from 43 to 45
+    catan.placeSecondSettlement(p3, 16, 26, board); // Settlement at 16, Road from 16 to 18
     cout << "\n";
 
     catan.placeSecondSettlement(p2, 28, 29, board); // Settlement at 28, Road from 28 to 30
     cout << "\n";
 
-    catan.placeSecondSettlement(p3, 16, 26, board); // Settlement at 16, Road from 16 to 18
+    catan.placeSecondSettlement(p1, 44, 45, board); // Settlement at 43, Road from 43 to 45
     cout << "\n";
 
     // Simulate fewer game turns to speed up the process
@@ -208,9 +210,19 @@ int main() {
 
         // Player 2 turn
         p2.rollDice(); // Let's say it's 9.
-        std::shared_ptr<ariel::DevelopmentCard> card = std::make_shared<ariel::VictoryPointCard>();
-        p2.buyDevelopmentCard(card);
+        // std::shared_ptr<ariel::DevelopmentCard> card = std::make_shared<ariel::VictoryPointCard>();
+        // p2.buyDevelopmentCard(card);
         p2.endTurn();
+
+       
+        p1.addResource(Resource::Ore, 3);
+        p1.addResource(Resource::Wheat, 2);
+       
+
+         // Debug: Print Player 1's resources
+        cout << "Player 1 resources after addition:" << endl;
+        cout << "Ore: " << p1.getResource(Resource::Ore) << endl;
+        cout << "Wheat: " << p1.getResource(Resource::Wheat) << endl;
 
         int cityPoint = 41;
         catan.addCityToPlayer(p1, cityPoint, board);

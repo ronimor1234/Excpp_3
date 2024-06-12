@@ -17,4 +17,8 @@ namespace ariel {
         return true; 
     }
 
+    std::string City::getOwner() const {
+        return owner.getName();
+    }
+
 } // namespace ariel

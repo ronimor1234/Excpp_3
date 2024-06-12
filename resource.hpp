@@ -4,13 +4,13 @@
 
 namespace ariel {
 
-    enum class Resource {
+    enum class Resource  {
         Wood,
         Brick,
         Sheep,
         Wheat,
         Ore,
-        None  // Add None as a possible resource
+        // None  // Add None as a possible resource
     };
 
 } // namespace ariel

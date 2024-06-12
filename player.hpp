@@ -88,16 +88,20 @@
 namespace ariel {
 
 class Board;
+class DevelopmentCard;
+class Catan;
 
 class Player {
 private:
     std::string name;
-     std::vector<Settlement> settlements; // List of settlements owned by the player
+    std::vector<Settlement> settlements; // List of settlements owned by the player
     std::vector<Road> roads; // List of roads owned by the player
     std::map<Resource, int> resources; // Map to track resources owned by the player
     std::vector<std::shared_ptr<DevelopmentCard>> developmentCards; // List of development cards owned by the player
     int points; // Player's total points
     std::set<std::pair<int, int>> roadConnections; // Set to track road connections owned by the player
+    int knightCount = 0;
+    bool largestArmy = false;
 
 public:
     Player() : name("Default Player"), points(0) {}
@@ -113,18 +117,26 @@ public:
     void rollDice();
     void endTurn();
     void trade(Player& other, const std::string& give, const std::string& receive, int giveAmount, int receiveAmount); // Use Resource enum here
-    void buyDevelopmentCard(std::shared_ptr<DevelopmentCard> card);
+    void buyDevelopmentCard();
+    void useDevelopmentCard(const std::string& cardName, Catan& game);
     void printPoints() const;
+    void printPlayerInfo() const;
+
+    void addKnightCard();
+    void checkLargestArmy();
+    bool hasLargestArmy() const;
+
 
     // Getters and Setters
     std::string getName() const;
     int getPoints() const;
     int getResource(Resource resource) const;
 
-    // Functions for managing settlements and city
+    // Functions for managing settlements and cities
     void addSettlement(int point);
     bool hasSettlement(int point) const;
-    void addCity(int point);
+    void addCity(int point, Board& board);
+    bool hasSettlementOrCity(int point) const;
 
     // Functions for managing roads
     void addRoad(int startPoint, int endPoint, Board& board);
@@ -140,6 +152,9 @@ public:
     const std::vector<Road>& getRoads() const;
     const std::vector<Settlement>& getSettlements() const;
     bool hasRoadAt(int point) const;
+
+    void addPoints(int points);
+
 };
 
 } // namespace ariel

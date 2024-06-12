@@ -41,6 +41,8 @@ namespace ariel {
 
         // Method to add city
         void addCityToPlayer(Player& player, int point, Board& board);
+
+        void collectMonopolyResources(Player& player, Resource chosenResource);
         
         };
 } // namespace ariel

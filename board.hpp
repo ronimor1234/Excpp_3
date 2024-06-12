@@ -95,9 +95,9 @@ namespace ariel {
         void initializeBoard();
 
         // Methods to place settlements and roads
-        void placeSettlement(int point, const Player& player);
+        bool placeSettlement(int point, const std::string& playerName);
         bool placeRoad(int startPoint, int endPoint, const Player& player);
-        bool isPlaceOccupied(const std::string& place, int placeNum) const;
+        bool isPlaceOccupied(int point) const;
 
         // Helper methods
         Tile& getTile(int point);
@@ -116,9 +116,13 @@ namespace ariel {
 
         bool isValidSettlementPoint(int point, const Player& player);
 
-        bool isValidRoad(int startPoint, int endPoint, const Player& player);
+        bool isValidRoad(int startPoint, int endPoint, const Player& player) const;
 
         bool canAddCity(int point) const;
+        void upgradeSettlementToCity(int point, const std::string& playerName);
+        bool hasSettlementOrCity(int point, const std::string& playerName) const; 
+        void printBoardState() const;
+        // void addSettlement(int point);
     };
 
 } // namespace ariel

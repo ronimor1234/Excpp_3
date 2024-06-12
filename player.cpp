@@ -6,6 +6,10 @@
 #include "road.hpp"
 #include <iostream>
 #include <stdexcept>
+#include <algorithm>
+#include "development_card.hpp"
+#include <string>
+
 
 namespace ariel {
 
@@ -23,7 +27,7 @@ Player::Player(const std::string& name) : name(name), points(0) {
 void Player::placeSettlement(int point, Board& board) {
     if (canPlaceSettlement(point, board)) {
         addSettlement(point); // Add settlement to player's settlements
-        std::cout << getName() << " placed a settlement at point: " << point <<std::endl;
+        board.placeSettlement(point, getName()); // Update the board with the settlement
         points += 1; // Each settlement is worth 1 point
     } else {
         std::cerr << getName() << " failed to place a settlement." << std::endl;
@@ -34,14 +38,15 @@ void Player::placeSettlement(int point, Board& board) {
 bool Player::canPlaceSettlement(int point, const Board& board) const {
     // Allow placing the first two settlements without additional checks
     if (settlements.size() < 2) {
-        return !board.isPlaceOccupied("some_place", point);
+        // return !board.isPlaceOccupied("some_place", point);
+        return !board.isPlaceOccupied(point);
     }
 
     // Additional checks for subsequent settlements
-    if (board.isPlaceOccupied("some_place", point)) {
+    if (board.isPlaceOccupied(point)) {
         return false;
     }
-    if (!board.isPlaceAdjacentToPlayerRoad(std::make_pair("some_place", point), *this)) {
+    if (!board.isPlaceAdjacentToPlayerRoad(std::make_pair(getName(), point), *this)) {
         return false;
     }
     // Add more checks if necessary (e.g., settlements should not be adjacent to each other)
@@ -51,30 +56,76 @@ bool Player::canPlaceSettlement(int point, const Board& board) const {
 
 // Place a road between two points on the board
 void Player::placeRoad(int startPoint, int endPoint, Board& board) {
-    if (board.placeRoad(startPoint, endPoint, *this)) {
-        addRoad(startPoint, endPoint, board);
+        if (canPlaceRoad(startPoint, endPoint, board)) {
+            addRoad(startPoint, endPoint, board); // Add road to player's roads
+            board.placeRoad(startPoint, endPoint, *this); // Update the board with the road
+            std::cout << getName() << " placed a road from " << startPoint << " to " << endPoint << std::endl;
+        } else {
+            std::cerr << getName() << " failed to place a road." << std::endl;
+        }
     }
-}
 
 // Check if a road can be placed between two points
+// bool Player::canPlaceRoad(int startPoint, int endPoint, const Board& board) const {
+//     std::cout << "Checking road placement for " << getName() << " from " << startPoint << " to " << endPoint << std::endl;
+
+//     // First, check if the player has settlements or cities at both start and end points
+//     if (!hasSettlementOrCity(startPoint) || !hasSettlementOrCity(endPoint)) {
+//         std::cout << "No settlement or city for " << getName() << " at start or end point." << std::endl;
+//         return false;
+//     }
+
+//     // Check if there is already a road at the start or end point
+//     if (board.isPlaceOccupied(startPoint) || board.isPlaceOccupied(endPoint)) {
+//         std::cout << "Road already occupied at startPoint " << startPoint << " or endPoint " << endPoint << std::endl;
+//         return false;
+//     }
+
+//     // For the first two roads, allow placement without additional checks
+//     if (roads.size() < 2) {
+//         return true;
+//     }
+
+//     // Additional checks for subsequent roads
+//     auto startPair = std::make_pair(startPoint, endPoint);
+//     auto endPair = std::make_pair(endPoint, startPoint);
+//     if (roadConnections.find(startPair) == roadConnections.end() &&
+//         roadConnections.find(endPair) == roadConnections.end()) {
+//         std::cout << "No road connection found between " << startPoint << " and " << endPoint << std::endl;
+//         return false;
+//     }
+
+//     // Check adjacency between the start and end points
+//     if (!board.areAdjacent(std::make_pair(getName(), startPoint), std::make_pair(getName(), endPoint))) {
+//         std::cout << "Points " << startPoint << " and " << endPoint << " are not adjacent" << std::endl;
+//         return false;
+//     }
+
+//     // If all checks pass, road can be placed
+//     return true;
+// }
+
 bool Player::canPlaceRoad(int startPoint, int endPoint, const Board& board) const {
-    // Allow placing the first two roads without additional checks
-    if (roads.size() < 2) {
-        return !board.isPlaceOccupied("some_place", startPoint) && !board.isPlaceOccupied("some_place", endPoint);
+    // Check if the player has a settlement or city at either startPoint or endPoint
+    if (hasSettlementOrCity(startPoint) || hasSettlementOrCity(endPoint)) {
+        return true;
     }
 
-    // Additional checks for subsequent roads
-    auto startPair = std::make_pair(startPoint, endPoint);
-    auto endPair = std::make_pair(endPoint, startPoint);
-    if (roadConnections.find(startPair) == roadConnections.end() &&
-        roadConnections.find(endPair) == roadConnections.end()) {
-        return false;
+    // Check if the player has a road at either startPoint or endPoint
+    if (hasRoadAt(startPoint) || hasRoadAt(endPoint)) {
+        return true;
     }
-    if (!board.areAdjacent(std::make_pair("", startPoint), std::make_pair("", endPoint))) {
-        return false;
+
+    // Check if the points are adjacent and free of roads
+    if (board.areAdjacent(std::make_pair(name, startPoint), std::make_pair(name, endPoint))) {
+        return true;
     }
-    return true;
+
+    // Otherwise, the road placement is invalid
+    return false;
 }
+
+
 
 
 // Get the road connections owned by the player
@@ -120,18 +171,36 @@ void Player::trade(Player& other, const std::string& give, const std::string& re
 }
 
 // Buy a development card and add it to the player's collection
-void Player::buyDevelopmentCard(std::shared_ptr<DevelopmentCard> card) {
+void Player::buyDevelopmentCard() {
     // Placeholder for checking and removing resources
     if (resources[Resource::Sheep] >= 1 && resources[Resource::Wheat] >= 1 && resources[Resource::Ore] >= 1) {
         resources[Resource::Sheep] -= 1;
         resources[Resource::Wheat] -= 1;
         resources[Resource::Ore] -= 1;
+        std::shared_ptr<DevelopmentCard> card = std::make_shared<VictoryPointCard>(); // Create a VictoryPointCard
         developmentCards.push_back(card);
         std::cout << name << " bought a development card." << std::endl;
     } else {
         std::cerr << "Cannot buy a development card due to insufficient resources." << std::endl;
     }
 }
+
+void Player::useDevelopmentCard(const std::string& cardName, Catan& game) {
+    auto it = std::find_if(developmentCards.begin(), developmentCards.end(), [&](const std::shared_ptr<DevelopmentCard>& card) {
+        return card->getName() == cardName && !card->isUsed();
+    });
+
+    if (it != developmentCards.end()) {
+        (*it)->applyEffect(*this, game); // Pass both Player and Catan objects
+        (*it)->setUsed(true); // Mark the card as used
+    } else {
+        throw std::invalid_argument("Invalid development card name or card already used.");
+    }
+}
+
+
+
+
 
 // Print the player's current points
 void Player::printPoints() const {
@@ -164,10 +233,9 @@ void Player::addResource(Resource resource, int amount) {
 
 // Remove a specified amount of a resource from the player's inventory
 void Player::removeResource(Resource resource, int amount) {
-    if (resources[resource] >= amount) {
-        resources[resource] -= amount;
-    } else {
-        throw std::runtime_error("Not enough resources to remove");
+    resources[resource] -= amount;
+    if (resources[resource] < 0) {
+        resources[resource] = 0; // Ensure it doesn't go below zero
     }
 }
 
@@ -190,7 +258,7 @@ void Player::addSettlement(int point) {
          resources[Resource::Wheat] >= 1 && 
          resources[Resource::Sheep] >= 1)) {
 
-        settlements.emplace_back("Settlement", point);
+        settlements.emplace_back(name, point);
         
         // Deduct resources only if it's not the initial setup phase
         if (settlements.size() >= 2) {
@@ -258,17 +326,17 @@ bool Player::hasRoadAt(int point) const {
     return false;
 }
 
-void Player::addCity(int point) {
-    // Check if there is a settlement at the specified point
+void Player::addCity(int point, Board& board) {
+    // Check if there is a settlement at the specified point owned by the player
     bool hasSettlement = false;
     for (auto& settlement : settlements) {
-        if (settlement.getPoint() == point) {
+        if (settlement.getPoint() == point && settlement.getPlace() == this->name) {
             hasSettlement = true;
             break;
         }
     }
     if (!hasSettlement) {
-        std::cerr << "Cannot add city: no settlement at the specified point." << std::endl;
+        std::cerr << getName() << " cannot add city: no settlement at the specified point " << point << " or settlement does not belong to the player." << std::endl;
         return;
     }
 
@@ -281,7 +349,8 @@ void Player::addCity(int point) {
         // Upgrade settlement to city
         for (auto& settlement : settlements) {
             if (settlement.getPoint() == point) {
-                settlement.setIsCity("City");
+                settlement.setIsCity(true);
+                std::cout << getName() << " upgraded settlement at point " << point << " to a city." << std::endl;
                 break;
             }
         }
@@ -289,13 +358,64 @@ void Player::addCity(int point) {
         // Add a point to the player
         points += 1;
 
+        // Update the board
+        board.upgradeSettlementToCity(point, getName());
+
         std::cout << getName() << " added a city at point " << point << " successfully." << std::endl;
     } else {
-        std::cerr << "Cannot add city: insufficient resources (2 wheat and 3 ore required)." << std::endl;
+        std::cerr << getName() << " cannot add city: insufficient resources ("
+                  << resources[Resource::Wheat] << " Wheat, "
+                  << resources[Resource::Ore] << " Ore, but 2 Wheat and 3 Ore required)." << std::endl;
     }
 }
 
 
+void Player::printPlayerInfo() const {
+    std::cout << getName() << " has " << points << " points and resources: ";
+    for (const auto& resource : resources) {
+        std::cout << static_cast<int>(resource.first) << ": " << resource.second << " ";
+    }
+    std::cout << std::endl;
+}
+
+bool Player::hasSettlementOrCity(int point) const {
+    for (const auto& settlement : settlements) {
+        if (settlement.getPlaceNum() == point) {
+            return true;
+        }
+    }
+    return false;
+}
+
+void Player::addKnightCard() {
+    knightCount++;
+    checkLargestArmy();
+}
+
+void Player::checkLargestArmy() {
+    static int maxKnightCount = 0;
+    static Player* currentLargestArmyPlayer = nullptr;
+
+    if (knightCount >= 3 && knightCount > maxKnightCount) {
+        if (currentLargestArmyPlayer) {
+            currentLargestArmyPlayer->largestArmy = false;
+            currentLargestArmyPlayer->points -= 2;
+        }
+        largestArmy = true;
+        points += 2;
+        maxKnightCount = knightCount;
+        currentLargestArmyPlayer = this;
+        std::cout << name << " has the largest army and gains 2 points." << std::endl;
+    }
+}
+
+bool Player::hasLargestArmy() const {
+    return largestArmy;
+}
+
+void Player::addPoints(int points) {
+    this->points += points;
+}
 
 } // namespace ariel
 

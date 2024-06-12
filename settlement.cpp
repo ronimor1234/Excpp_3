@@ -1,33 +1,42 @@
 //ID: 208018028, Mail: ronimordechai70@gmail.com
 
 #include "settlement.hpp"
-namespace ariel{
 
-Settlement::Settlement(const std::string& place, int placeNum) : place(place), placeNum(placeNum) {}
+namespace ariel {
 
-const std::string& Settlement::getPlace() const {
-    return place;
-}
+    Settlement::Settlement(const std::string& place, int placeNum)
+        : place(place), placeNum(placeNum), point(placeNum), isCity(false), owner("") {}
 
-int Settlement::getPlaceNum() const {
-    return placeNum;
-}
+    const std::string& Settlement::getPlace() const {
+        return place;
+    }
 
-bool Settlement::getIsCity() const {
+    int Settlement::getPlaceNum() const {
+        return placeNum;
+    }
+
+    int Settlement::getPoint() const {
+        return point;
+    }
+
+    bool Settlement::getIsCity() const {
         return isCity;
-}
+    }
 
-void Settlement::setIsCity(bool isCity) {
+    void Settlement::setIsCity(bool isCity) {
         this->isCity = isCity;
-}
+    }
 
-// bool Settlement::isConnectedTo(const std::string& place, int placeNum) const {
-//         for (const auto& connected : connectedPlaces) {  // Use a different name for the loop variable
-//             if (connected.first == place && connected.second == placeNum) {
-//                 return true;
-//             }
-//         }
-//         return false;
-//     }
+    // bool Settlement::isCity() const {
+    //     return isCity;
+    // }
 
-}
+    const std::string& Settlement::getOwner() const {
+        return owner;
+    }
+
+    void Settlement::upgradeToCity() {
+        isCity = true;
+    }
+
+} // namespace ariel

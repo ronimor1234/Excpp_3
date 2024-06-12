@@ -3,10 +3,10 @@
 #ifndef CITY_HPP
 #define CITY_HPP
 
+#include "player.hpp" // Include the full definition of Player
+#include <string>
 
 namespace ariel {
-
-    class Player; // Forward declaration
 
     class Tile; // Forward declaration
 
@@ -14,11 +14,14 @@ namespace ariel {
     private:
         Player& owner;
         Tile& location;
+        int point;
 
     public:
         City(Player& owner, Tile& location);  // Constructor declaration
         bool isSettlement() const;  // Function declaration
         bool isCity() const;  // Function declaration
+        int getPoint() const { return point; }
+        std::string getOwner() const;
     };
 
 } // namespace ariel
