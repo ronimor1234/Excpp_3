@@ -9,7 +9,7 @@
 #include <algorithm>
 #include "development_card.hpp"
 #include <string>
-
+#include <random>
 
 namespace ariel {
 
@@ -171,33 +171,89 @@ void Player::trade(Player& other, const std::string& give, const std::string& re
 }
 
 // Buy a development card and add it to the player's collection
-void Player::buyDevelopmentCard() {
+void Player::buyDevelopmentCard(std::shared_ptr<DevelopmentCard> card) {
     // Placeholder for checking and removing resources
     if (resources[Resource::Sheep] >= 1 && resources[Resource::Wheat] >= 1 && resources[Resource::Ore] >= 1) {
-        resources[Resource::Sheep] -= 1;
-        resources[Resource::Wheat] -= 1;
-        resources[Resource::Ore] -= 1;
-        std::shared_ptr<DevelopmentCard> card = std::make_shared<VictoryPointCard>(); // Create a VictoryPointCard
+        removeResource(Resource::Sheep,1);
+        removeResource(Resource::Wheat,1);
+        removeResource(Resource::Ore,1);
+
         developmentCards.push_back(card);
         std::cout << name << " bought a development card." << std::endl;
     } else {
         std::cerr << "Cannot buy a development card due to insufficient resources." << std::endl;
     }
 }
+// void Player::buyDevelopmentCard(int cardNumber) {
+//     if (cardNumber < 1 || cardNumber > 5) {
+//         throw std::invalid_argument("Invalid card number.");
+//     }
 
-void Player::useDevelopmentCard(const std::string& cardName, Catan& game) {
-    auto it = std::find_if(developmentCards.begin(), developmentCards.end(), [&](const std::shared_ptr<DevelopmentCard>& card) {
-        return card->getName() == cardName && !card->isUsed();
-    });
+//     // Placeholder for checking and removing resources
+//     if (resources[Resource::Sheep] >= 1 && resources[Resource::Wheat] >= 1 && resources[Resource::Ore] >= 1) {
+//         resources[Resource::Sheep] -= 1;
+//         resources[Resource::Wheat] -= 1;
+//         resources[Resource::Ore] -= 1;
+
+//         // Create a random development card
+//         std::shared_ptr<DevelopmentCard> card;
+//         switch (cardNumber) {
+//             case 1:
+//                 card = std::make_shared<VictoryPointCard>();
+//                 break;
+//             case 2:
+//                 card = std::make_shared<YearOfPlentyCard>(Resource::Brick, Resource::Brick);
+//                 break;
+//             case 3:
+//                 card = std::make_shared<RoadConstructionCard>(Road(/* specify road */));
+//                 break;
+//             case 4:
+//                 card = std::make_shared<MonopolyCard>(Resource::Brick);
+//                 break;
+//             case 5:
+//                 card = std::make_shared<KnightCard>();
+//                 break;
+//             default:
+//                 throw std::invalid_argument("Invalid card number.");
+//         }
+
+//         developmentCards.push_back(card);
+//         std::cout << name << " bought a development card." << std::endl;
+//     } else {
+//         std::cerr << "Cannot buy a development card due to insufficient resources." << std::endl;
+//     }
+// }
+
+
+
+
+void Player::useDevelopmentCard(const std::string& cardName, Catan& catan) {
+    auto it = std::find_if(developmentCards.begin(), developmentCards.end(), 
+                           [&cardName](const std::shared_ptr<DevelopmentCard>& card) {
+                               return card->getName() == cardName && !card->isUsed();
+                           });
 
     if (it != developmentCards.end()) {
-        (*it)->applyEffect(*this, game); // Pass both Player and Catan objects
-        (*it)->setUsed(true); // Mark the card as used
+        (*it)->applyEffect(*this, catan);
+        (*it)->setUsed(true);
     } else {
-        throw std::invalid_argument("Invalid development card name or card already used.");
+        throw std::invalid_argument("Invalid development card name.");
     }
 }
 
+
+// void Player::useDevelopmentCard(int cardNumber, Catan& game) {
+//     if (cardNumber < 0 || static_cast<size_t>(cardNumber) >= developmentCards.size()) {
+//         throw std::invalid_argument("Invalid card number.");
+//     }
+
+//     if (!developmentCards[cardNumber]->isUsed()) {
+//         developmentCards[cardNumber]->applyEffect(*this, game); // Pass both Player and Catan objects
+//         developmentCards[cardNumber]->setUsed(true); // Mark the card as used
+//     } else {
+//         throw std::invalid_argument("Development card already used.");
+//     }
+// }
 
 
 
@@ -218,13 +274,22 @@ int Player::getPoints() const {
 }
 
 // Get the amount of a specific resource owned by the player
+// int Player::getResource(Resource resource) const {
+//     auto it = resources.find(resource);
+//     if (it != resources.end()) {
+//         return it->second;
+//     }
+//     return 0;
+// }
+
 int Player::getResource(Resource resource) const {
-    auto it = resources.find(resource);
+   auto it = resources.find(resource);
     if (it != resources.end()) {
         return it->second;
     }
-    return 0;
+    return 0; // Return 0 if the resource is not found
 }
+
 
 // Add a specified amount of a resource to the player's inventory
 void Player::addResource(Resource resource, int amount) {
@@ -233,11 +298,23 @@ void Player::addResource(Resource resource, int amount) {
 
 // Remove a specified amount of a resource from the player's inventory
 void Player::removeResource(Resource resource, int amount) {
-    resources[resource] -= amount;
-    if (resources[resource] < 0) {
-        resources[resource] = 0; // Ensure it doesn't go below zero
+    if (resources[resource] >= amount) {
+        resources[resource] -= amount;
+    } else {
+        resources[resource] = 0;
     }
 }
+// if (resources.find(resource) != resources.end()) {
+//         if (resources[resource] >= amount) {
+//             resources[resource] -= amount;
+//         } else {
+//             resources[resource] = 0;
+//         }
+//     } else {
+//         // Handle case where resource is not found (this should not happen if the resource map is properly initialized)
+//         throw std::out_of_range("Resource not found in player's inventory.");
+//     }
+// }
 
 // Get a reference to the vector of roads owned by the player
 const std::vector<Road>& Player::getRoads() const {
@@ -252,22 +329,20 @@ const std::vector<Settlement>& Player::getSettlements() const {
 // Add a settlement to the player's list of settlements
 void Player::addSettlement(int point) {
     // Always allow placing the first two settlements without checking resources
-    if (settlements.size() < 2 || 
-        (resources[Resource::Brick] >= 1 && 
-         resources[Resource::Wood] >= 1 && 
-         resources[Resource::Wheat] >= 1 && 
-         resources[Resource::Sheep] >= 1)) {
+    if (settlements.size() < 2) {
+        settlements.emplace_back(name, point);
+    } else if (resources[Resource::Brick] >= 1 && 
+               resources[Resource::Wood] >= 1 && 
+               resources[Resource::Wheat] >= 1 && 
+               resources[Resource::Sheep] >= 1) {
 
         settlements.emplace_back(name, point);
         
         // Deduct resources only if it's not the initial setup phase
-        if (settlements.size() >= 2) {
-            resources[Resource::Brick] -= 1;
-            resources[Resource::Wood] -= 1;
-            resources[Resource::Wheat] -= 1;
-            resources[Resource::Sheep] -= 1;
-        }
-
+        removeResource(Resource:: Brick, 1);
+        removeResource(Resource:: Wood, 1);
+        removeResource(Resource:: Wheat, 1);
+        removeResource(Resource:: Sheep, 1);
     } else {
         std::cerr << getName() << " cannot add settlement due to insufficient resources." << std::endl;
     }
@@ -287,21 +362,22 @@ bool Player::hasSettlement(int point) const {
 // Add a road between two points on the board
 void Player::addRoad(int startPoint, int endPoint, Board& board) {
     // Always allow placing the first two roads without checking resources
-    if (roads.size() < 2 || 
-        (resources[Resource::Brick] >= 1 && 
-         resources[Resource::Wood] >= 1)) {
+    if (roads.size() < 2) {
+        Tile& startTile = board.getTile(startPoint);
+        Tile& endTile = board.getTile(endPoint);
+        roads.emplace_back(*this, startTile, endTile);
+        roadConnections.insert(std::make_pair(startPoint, endPoint));
+    } else if (resources[Resource::Brick] >= 1 && 
+               resources[Resource::Wood] >= 1) {
         
         Tile& startTile = board.getTile(startPoint);
         Tile& endTile = board.getTile(endPoint);
         roads.emplace_back(*this, startTile, endTile);
         roadConnections.insert(std::make_pair(startPoint, endPoint));
         
-        // Deduct resources only if it's not the initial setup phase
-        if (roads.size() >= 2) {
-            resources[Resource::Brick] -= 1;
-            resources[Resource::Wood] -= 1;
-        }
-
+        // Deduct resources for roads placed after the initial two
+        removeResource(Resource:: Brick, 1);
+        removeResource(Resource:: Wood, 1);
     } else {
         std::cerr << getName() << " cannot add road due to insufficient resources." << std::endl;
     }

@@ -134,6 +134,7 @@
 #include "board.hpp"
 #include "development_card.hpp"
 #include "resource.hpp"
+#include <random>
 
 using namespace std;
 using namespace ariel;
@@ -145,8 +146,7 @@ int main() {
     Player p1("Yossi");
     Player p2("Amit");
     Player p3("Dana");
-
-    // Create Catan game instance
+ 
     Catan catan(p1, p2, p3);
 
     cout << "\nStarting the game...\n";
@@ -206,6 +206,17 @@ int main() {
         // Player 1 turn
         p1.rollDice(); // Let's say it's 6.
         p1.trade(p2, "wood", "brick", 1, 1);
+        p1.addResource(Resource::Ore, 1);
+        p1.addResource(Resource::Sheep, 1);
+        p1.addResource(Resource::Wheat, 1);
+        std::shared_ptr<DevelopmentCard> knightCard = std::make_shared<KnightCard>();
+        p1.buyDevelopmentCard(knightCard);
+        try {
+            p1.useDevelopmentCard("Knight", catan);
+            cout << "Player " << p1.getName() << " used a development card." << endl;
+        } catch (const std::invalid_argument& e) {
+            cerr << "Cannot use development card: " << e.what() << endl;
+        }
         p1.endTurn();
 
         // Player 2 turn
@@ -213,13 +224,27 @@ int main() {
         p2.addResource(Resource::Ore, 1);
         p2.addResource(Resource::Sheep, 1);
         p2.addResource(Resource::Wheat, 1);
-        p2.buyDevelopmentCard();
+        std::shared_ptr<DevelopmentCard> victoryPointCard = std::make_shared<VictoryPointCard>();
+        p2.buyDevelopmentCard(victoryPointCard);
         try {
             p2.useDevelopmentCard("Victory Point", catan);
             cout << "Player " << p2.getName() << " used a development card." << endl;
         } catch (const std::invalid_argument& e) {
             cerr << "Cannot use development card: " << e.what() << endl;
         }
+        // std::random_device rd;
+        // std::mt19937 gen(rd());
+        // std::uniform_int_distribution<> dis(1, 5); // Randomly choose between 1 to 5
+        // int cardNumberP2 = dis(gen); // Randomly choose card number for player 1
+        // p2.buyDevelopmentCard(cardNumberP2);
+        // // Player 2 uses a development card
+        // try {
+        //     p2.useDevelopmentCard(cardNumberP2 - 1, catan); // Using the same card that was bought
+        //     std::cout << "Player 2 used a development card." << std::endl;
+        // } catch (const std::invalid_argument& e) {
+        //     std::cerr << "Cannot use development card for Player 2: " << e.what() << std::endl;
+        // }
+
         p2.endTurn();
 
        
@@ -234,6 +259,29 @@ int main() {
 
         int cityPoint = 41;
         catan.addCityToPlayer(p1, cityPoint, board);
+
+        // Player 2 turn
+        p3.rollDice(); // Let's say it's 9.
+        p3.addResource(Resource::Ore, 1);
+        p3.addResource(Resource::Sheep, 1);
+        p3.addResource(Resource::Wheat, 1);
+        cout << "Player 3 resources before DevelopmentCard Road Construction:" << endl;
+        cout << "Brick: " << p3.getResource(Resource::Brick) << endl;
+        cout << "Wood: " << p3.getResource(Resource::Wood) << endl;
+
+        std::shared_ptr<DevelopmentCard> roadConstructionCard  = std::make_shared<RoadConstructionCard>();
+        p3.buyDevelopmentCard(roadConstructionCard);
+        try {
+            p3.useDevelopmentCard("Road Construction", catan);
+            cout << "Player " << p3.getName() << " used a development card." << endl;
+        } catch (const std::invalid_argument& e) {
+            cerr << "Cannot use development card: " << e.what() << endl;
+        }
+
+        cout << "Player 3 resources after DevelopmentCard Road Construction:" << endl;
+        cout << "Brick: " << p3.getResource(Resource::Brick) << endl;
+        cout << "Wood: " << p3.getResource(Resource::Wood) << endl;
+
 
         // Print points of each player
         p1.printPoints();
@@ -254,6 +302,37 @@ int main() {
 
         cout << endl;
     }
+    // Add resources for demonstration after game turns
+    p1.addResource(Resource::Sheep, 1);
+    p2.addResource(Resource::Sheep, 1);
+    p3.addResource(Resource::Ore, 1);
+    p3.addResource(Resource::Sheep, 1);
+    p3.addResource(Resource::Wheat, 1);
+
+    // Print resources before using Monopoly Card
+    cout << "Player 3 resources before using Monopoly Card:" << endl;
+    cout << "Brick: " << p3.getResource(Resource::Brick) << endl;
+    cout << "Wood: " << p3.getResource(Resource::Wood) << endl;
+    cout << "Sheep: " << p3.getResource(Resource::Sheep) << endl;
+    cout << "Wheat: " << p3.getResource(Resource::Wheat) << endl;
+    cout << "Ore: " << p3.getResource(Resource::Ore) << endl;
+
+    std::shared_ptr<DevelopmentCard> monopolyCard = std::make_shared<MonopolyCard>(Resource::Sheep);
+    p3.buyDevelopmentCard(monopolyCard);
+    try {
+        p3.useDevelopmentCard("Monopoly", catan);
+        std::cout << "Player " << p3.getName() << " used a development card." << std::endl;
+    } catch (const std::invalid_argument& e) {
+        std::cerr << "Cannot use development card: " << e.what() << std::endl;
+    }
+
+     // Print resources after using Monopoly Card
+    cout << "Player 3 resources after using Monopoly Card:" << endl;
+    cout << "Brick: " << p3.getResource(Resource::Brick) << endl;
+    cout << "Wood: " << p3.getResource(Resource::Wood) << endl;
+    cout << "Sheep: " << p3.getResource(Resource::Sheep) << endl;
+    cout << "Wheat: " << p3.getResource(Resource::Wheat) << endl;
+    cout << "Ore: " << p3.getResource(Resource::Ore) << endl;
 
     return 0;
 }

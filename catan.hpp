@@ -42,8 +42,10 @@ namespace ariel {
         // Method to add city
         void addCityToPlayer(Player& player, int point, Board& board);
 
-        void collectMonopolyResources(Player& player, Resource chosenResource);
-        
+        void collectMonopolyResources(Player& currentPlayer, Resource chosenResource);
+        std:: string resourceToString(Resource resource);
+        std::vector<Player>& getPlayers() { return players; }
+
         };
 } // namespace ariel
 #endif // CATAN_HPP

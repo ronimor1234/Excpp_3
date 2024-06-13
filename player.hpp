@@ -117,8 +117,8 @@ public:
     void rollDice();
     void endTurn();
     void trade(Player& other, const std::string& give, const std::string& receive, int giveAmount, int receiveAmount); // Use Resource enum here
-    void buyDevelopmentCard();
-    void useDevelopmentCard(const std::string& cardName, Catan& game);
+    void buyDevelopmentCard(std::shared_ptr<DevelopmentCard> card);
+    void useDevelopmentCard(const std::string& cardName, Catan& catan);
     void printPoints() const;
     void printPlayerInfo() const;
 
@@ -154,6 +154,13 @@ public:
     bool hasRoadAt(int point) const;
 
     void addPoints(int points);
+
+     // Getter for resources
+    const std::map<Resource, int>& getResources() const {
+        return resources;
+    }
+
+
 
 };
 

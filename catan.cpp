@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include <ctime>
 #include <cstdlib> // for std::rand()
+#include "resource.hpp"
 
 namespace ariel{
 Catan::Catan(const Player& p1, const Player& p2, const Player& p3) {
@@ -77,37 +78,64 @@ void Catan::addCityToPlayer(Player& player, int point, Board& board) {
     }
 }
 
-void Catan::collectMonopolyResources(Player& player, Resource chosenResource) {
-    // Loop through all tiles and collect resources of the chosen type
-    Board& gameBoard = board;
-    // Convert Resource enum to string
-    std::string chosenResourceStr;
-    switch (chosenResource) {
-        case Resource::Brick:
-            chosenResourceStr = "Brick";
-            break;
-        case Resource::Wood:
-            chosenResourceStr = "Wood";
-            break;
-        case Resource::Sheep:
-            chosenResourceStr = "Sheep";
-            break;
-        case Resource::Wheat:
-            chosenResourceStr = "Wheat";
-            break;
-        case Resource::Ore:
-            chosenResourceStr = "Ore";
-            break;
-        // Add other cases for each resource type
-    }
-
-    // Loop through all tiles and collect resources of the chosen type
-    for (Tile& tile : gameBoard.tiles) {
-        if (tile.getType() == chosenResourceStr) {
-            player.addResource(chosenResource,1);
-        }
+// Function to convert Resource enum to string
+std::string Catan::resourceToString(Resource resource) {
+    switch (resource) {
+        case Resource::Brick: return "Brick";
+        case Resource::Wood: return "Wood";
+        case Resource::Sheep: return "Sheep";
+        case Resource::Wheat: return "Wheat";
+        case Resource::Ore: return "Ore";
+        default: return "Unknown";
     }
 }
+
+// void Catan::collectMonopolyResources(Player& player, Resource chosenResource) {
+//     std::cout << "Player " << player.getName() << " is using Monopoly Card for " << resourceToString(chosenResource) << std::endl;
+    
+//     int totalResourcesTaken = 0;
+
+//     // Loop through all players and take the chosen resource from them
+//     for (Player& otherPlayer : players) {
+//         if (&otherPlayer != &player) {  // Avoid taking from the player who played the card
+//             int resourcesTaken = otherPlayer.getResource(chosenResource);
+//             int test = otherPlayer.getResource(Resource::Sheep);
+//             std::cout << otherPlayer.getName() << " have " << test << " " << resourceToString(chosenResource) << std::endl;
+//             std::cout << otherPlayer.getName() << " has " << resourcesTaken << " " << resourceToString(chosenResource) << std::endl;
+//             if (resourcesTaken > 0) {
+//                 player.addResource(chosenResource, resourcesTaken);
+//                 otherPlayer.removeResource(chosenResource, resourcesTaken);
+//                 totalResourcesTaken += resourcesTaken;
+//                 std::cout << "Took " << resourcesTaken << " " << resourceToString(chosenResource) << " from " << otherPlayer.getName() << std::endl;
+//             }
+//         }
+//     }
+
+//     std::cout << "Total " << resourceToString(chosenResource) << " taken: " << totalResourcesTaken << std::endl;
+//     std::cout << "Monopoly Card effect finished." << std::endl;
+// }
+
+   void Catan::collectMonopolyResources(Player& currentPlayer, Resource chosenResource) {
+    int totalAmount = 0;
+
+    // Calculate total amount of chosen resource across all players except currentPlayer
+    for (auto& player : players) {
+        if (&player != &currentPlayer) {
+            totalAmount += player.getResource(chosenResource);
+        }
+    }
+
+    // Distribute the total amount to the currentPlayer and reset other players' amounts to zero
+    for (auto& player : players) {
+        if (&player != &currentPlayer) {
+            int amount = player.getResource(chosenResource);
+            player.removeResource(chosenResource, amount); // Set other players' resource to zero
+        }
+    }
+    currentPlayer.addResource(chosenResource, totalAmount); // Add the total to the currentPlayer
+
+}
+
 
 } //namesapace ariel
 

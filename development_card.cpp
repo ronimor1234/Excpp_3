@@ -144,21 +144,75 @@
 //     }
 
 // } // namespace ariel
+
+
+// #include "development_card.hpp"
+// #include "catan.hpp"
+
+// namespace ariel {
+
+// std::string MonopolyCard::getType() const {
+//     return "Monopoly";
+// }
+
+// void MonopolyCard::applyEffect(Player& player, Catan& game) {
+//     game.collectMonopolyResources(player, chosenResource);
+// }
+
+// std::string YearOfPlentyCard::getType() const {
+//     return "Year of Plenty";
+// }
+
+// void YearOfPlentyCard::applyEffect(Player& player, Catan& /*game*/) {
+//     player.addResource(firstResource, 1);
+//     player.addResource(secondResource, 1);
+// }
+
+// // std::string RoadConstructionCard::getType() const {
+// //     return "Road Construction";
+// // }
+
+// void RoadConstructionCard::applyEffect(Player& player, Catan& /*game*/) {
+//     player.addResource(Resource::Brick, 2);
+//     player.addResource(Resource::Wood, 2);
+//     setUsed(true); // Mark the card as used after applying its effect
+// }
+
+// void KnightCard::applyEffect(Player& player, Catan& /*game*/) {
+//     std::cout << "Knight card played: Increase knight count." << std::endl;
+//     player.addKnightCard();
+// }
+
+
+// void VictoryPointCard::applyEffect(Player& player, Catan& /*game*/) {
+//     player.addPoints(1);
+// }
+
+// } // namespace ariel
+
+
 #include "development_card.hpp"
 #include "catan.hpp"
+#include <stdexcept>
+#include <iostream>
 
 namespace ariel {
 
-std::string MonopolyCard::getType() const {
-    return "Monopoly";
+void KnightCard::applyEffect(Player& player, Catan& /*game*/) {
+    std::cout << "Knight card played: Increase knight count." << std::endl;
+    player.addKnightCard();
 }
 
-void MonopolyCard::applyEffect(Player& player, Catan& game) {
-    game.collectMonopolyResources(player, chosenResource);
+void VictoryPointCard::applyEffect(Player& player, Catan& /*game*/) {
+    std::cout << "Victory Point card played: Gain 1 victory point." << std::endl;
+    player.addPoints(1);
 }
 
-std::string YearOfPlentyCard::getType() const {
-    return "Year of Plenty";
+// void MonopolyCard::applyEffect(Player& player, Catan& catan) {
+//     catan.collectMonopolyResources(player, chosenResource);
+// }
+void MonopolyCard::applyEffect(Player& player, Catan& /*game*/) {
+    player.addResource(Resource::Sheep, 2);
 }
 
 void YearOfPlentyCard::applyEffect(Player& player, Catan& /*game*/) {
@@ -166,32 +220,9 @@ void YearOfPlentyCard::applyEffect(Player& player, Catan& /*game*/) {
     player.addResource(secondResource, 1);
 }
 
-std::string RoadConstructionCard::getType() const {
-    return "Road Construction";
-}
-
-void RoadConstructionCard::applyEffect(Player& player, Catan& game) {
-    int startPoint = *(lastRoad.getEnd().getPoints().begin()); // Assuming getPoints() returns the point
-    int endPoint = *(lastRoad.getStart().getPoints().begin()); // Assuming getPoints() returns the point
-
-    game.getBoard().placeRoad(startPoint, endPoint, player);
-    game.getBoard().placeRoad(endPoint, startPoint, player); // Make it bidirectional
-}
-
-// std::string KnightCard::getType() const {
-//     return "Knight";
-// }
-
-void KnightCard::applyEffect(Player& /*player*/, Catan& /*game*/) {
-    // Implement Knight's effect here
-}
-
-// std::string VictoryPointCard::getType() const {
-//     return "Victory Point";
-// }
-
-void VictoryPointCard::applyEffect(Player& player, Catan& /*game*/) {
-    player.addPoints(1);
+void RoadConstructionCard::applyEffect(Player& player, Catan& /*game*/) {
+    player.addResource(Resource::Brick, 2);
+    player.addResource(Resource::Wood, 2);
 }
 
 } // namespace ariel
