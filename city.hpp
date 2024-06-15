@@ -1,9 +1,8 @@
 //ID: 208018028, Mail: ronimordechai70@gmail.com
-
 #ifndef CITY_HPP
 #define CITY_HPP
 
-#include "player.hpp" // Include the full definition of Player
+#include "player.hpp" 
 #include <string>
 
 namespace ariel {

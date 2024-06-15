@@ -16,7 +16,6 @@ namespace ariel {
 
     public:
         Road(const Player& owner, Tile& start, Tile& end);
-        // bool isConnectedTo(const std::string& place, int placeNum) const;
         // Getters
         
         Tile& getStart() const;

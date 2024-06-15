@@ -135,7 +135,7 @@ std::string Catan::resourceToString(Resource resource) {
 void Catan::distributeResources(int roll) {
     std::cout << "Rolling: " << roll << std::endl;
 
-    // Fixed tiles with their associated resources and points
+    // Fixed tiles with their associated resources and points, without desert
     std::vector<std::tuple<std::string, int, std::vector<int>, Resource>> fixedTiles = {
         {"Mountains", 10, {1, 2, 3, 9, 10, 11}, Resource::Ore},
         {"Pasture Land", 2, {3, 4, 5, 11, 12, 13}, Resource::Sheep},
@@ -146,7 +146,6 @@ void Catan::distributeResources(int roll) {
         {"Hills", 10, {14, 15, 16, 26, 25, 24}, Resource::Brick},
         {"Agricultural Land", 9, {17, 18, 19, 28, 29, 30}, Resource::Wheat},
         {"Forest", 11, {19, 20, 21, 32, 31, 30}, Resource::Wood},
-        // {"Desert", 7, {21, 22, 23, 34, 33, 32}, Resource::None},
         {"Forest", 3, {23, 24, 25, 36, 35, 34}, Resource::Wood},
         {"Mountains", 8, {25, 26, 27, 38, 37, 36}, Resource::Ore},
         {"Forest", 8, {29, 30, 31, 41, 40, 39}, Resource::Wood},
@@ -158,31 +157,8 @@ void Catan::distributeResources(int roll) {
         {"Pasture Land", 11, {44, 45, 46, 54, 53, 52}, Resource::Sheep}
     };
 
-    // Distribute resources based on the roll
-//     for (const auto& tile : fixedTiles) {
-//         std::string terrain;
-//         int tileRoll;
-//         std::vector<int> points;
-//         Resource resource;
 
-//         std::tie(terrain, tileRoll, points, resource) = tile;
-
-//          if (tileRoll == roll) {
-//             for (int point : points) {
-//                 for (auto& player : players) {
-//                     for (auto& settlement : player.getSettlements()) {
-//                         if (point == settlement.getPoint() || point == settlement.getPlaceNum()) {
-//                             std::cout << "Matching tile: " << terrain << ", Roll: " << roll << ", Resource: " << resourceToString(resource) << std::endl;
-//                             std::cout << "Distributing resource: " << resourceToString(resource) << " to player: " << player.getName() << std::endl;
-//                             player.addResource(resource, 1); // Assuming addResource takes amount as a parameter
-//                         }
-//                     }
-//                 }
-//             }
-//         }
-//     }
-// }
- for (const auto& tile : fixedTiles) {
+    for (const auto& tile : fixedTiles) {
         std::string terrain;
         int tileRoll;
         std::vector<int> points;
@@ -207,11 +183,6 @@ void Catan::distributeResources(int roll) {
     }
 }
 
-// void Catan::rollDice(Player& player) {
-//     int roll = std::rand() % 6 + 1 + std::rand() % 6 + 1; // Rolling two six-sided dice
-//     std::cout << player.getName() << " rolled: " << roll << std::endl;
-//     distributeResources(roll);
-// }
 
 void Catan::rollDice(Player& player) {
     int roll = std::rand() % 6 + 1 + std::rand() % 6 + 1; // Rolling two six-sided dice
@@ -239,7 +210,7 @@ void Catan::rollDice(Player& player) {
         {"Pasture Land", 11, {44, 45, 46, 54, 53, 52}, Resource::Sheep}
     };
 
-    // Iterate over the fixed tiles and distribute resources
+    //Iterate through all tiles to find and process those with the rolled number
     for (const auto& tile : fixedTiles) {
         std::string terrain;
         int tileRoll;
@@ -248,46 +219,23 @@ void Catan::rollDice(Player& player) {
 
         std::tie(terrain, tileRoll, points, resource) = tile;
 
+        // Process only the tiles that match the rolled number
         if (tileRoll == roll) {
             for (int point : points) {
-                for (auto& settlement : player.getSettlements()) {
-                    if (point == settlement.getPoint() || point == settlement.getPlaceNum()) {
-                        std::cout << "Matching tile: " << terrain << ", Roll: " << roll << ", Resource: " << resourceToString(resource) << std::endl;
-                        std::cout << "Distributing resource: " << resourceToString(resource) << " to player: " << player.getName() << std::endl;
-                        player.addResource(resource, 1); // Assuming addResource takes amount as a parameter
+                    for (auto& settlement : player.getSettlements()) {
+                        if (point == settlement.getPoint() || point == settlement.getPlaceNum()) {
+                            std::cout << "Matching tile: " << terrain << ", Roll: " << roll << ", Resource: " << resourceToString(resource) << std::endl;
+                            std::cout << "Distributing resource: " << resourceToString(resource) << " to player: " << player.getName() << std::endl;
+                            int amount = settlement.getIsCity() ? 2 : 1;
+                            player.addResource(resource, amount); // Assuming addResource takes amount as a parameter
+                        }
                     }
                 }
             }
         }
     }
-}
- // Iterate through all tiles to find and process those with the rolled number
-//     for (const auto& tile : fixedTiles) {
-//         std::string terrain;
-//         int tileRoll;
-//         std::vector<int> points;
-//         Resource resource;
 
-//         std::tie(terrain, tileRoll, points, resource) = tile;
-
-//         // Process only the tiles that match the rolled number
-//         if (tileRoll == roll) {
-//             for (int point : points) {
-//                 for (auto& player : players) {
-//                     for (auto& settlement : player.getSettlements()) {
-//                         if (point == settlement.getPoint() || point == settlement.getPlaceNum()) {
-//                             std::cout << "Matching tile: " << terrain << ", Roll: " << roll << ", Resource: " << resourceToString(resource) << std::endl;
-//                             std::cout << "Distributing resource: " << resourceToString(resource) << " to player: " << player.getName() << std::endl;
-//                             int amount = settlement.getIsCity() ? 2 : 1;
-//                             player.addResource(resource, amount); // Assuming addResource takes amount as a parameter
-//                         }
-//                     }
-//                 }
-//             }
-//         }
-//     }
-// }
- std::string resourceToString(Resource resource) {
+std::string resourceToString(Resource resource) {
         switch (resource) {
             case Resource::Brick:
                 return "Brick";
@@ -304,25 +252,6 @@ void Catan::rollDice(Player& player) {
         }
     }
 
-    // void Catan::distributeResources(int diceRoll) {
-    //     // Get the tiles that produce resources for this dice roll
-    //     std::vector<Tile*> producingTiles = board.getTilesByNumber(diceRoll);
-
-    //     // Distribute resources to players with settlements or cities on these tiles
-    //     for (auto tile : producingTiles) {
-    //         for (auto& player : players) {
-    //             for (int point : tile->getPoints()) {
-    //                 if (board.hasSettlementOrCityOnPoint(player.getName(), point)) {
-    //                     Resource resource = tile->produceResource();
-    //                     int amount = (board.getTileType(tile->getType()) == TileType::City) ? 2 : 1;
-
-    //                     // Add resources to the player
-    //                     player.addResource(resource, amount);
-    //                 }
-    //             }
-    //         }
-    //     }
-    // }
 
 } //namesapace ariel
 

@@ -49,7 +49,6 @@ namespace ariel {
         Player& getPlayer(int index);
         void distributeResources(int roll);
         void rollDice(Player& player);
-        // void distributeResources(int diceRoll);
 
         };
 } // namespace ariel

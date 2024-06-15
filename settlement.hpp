@@ -21,7 +21,6 @@ namespace ariel {
         int getPoint() const;
         bool getIsCity() const;
         void setIsCity(bool isCity);
-        // bool isCity() const;
         const std::string& getOwner() const;
         void upgradeToCity();
     };

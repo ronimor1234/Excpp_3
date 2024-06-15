@@ -101,48 +101,6 @@ std::set<int> Player::getSettlementLocations() const {
     return locations;
 }
 
-// void Player::rollDice(Catan& catan) {
-//     int roll = std::rand() % 6 + 1 + std::rand() % 6 + 1; // Rolling two six-sided dice
-//     std::cout << name << " rolled: " << roll << std::endl;
-//     catan.distributeResources(roll);
-// }
-
-//     void Player::distributeResources(Board& board, int roll) {
-//     std::cout << name << " rolled: " << roll << std::endl;
-
-//     // Get all tiles with the rolled number
-//     std::vector<Tile*> rolledTiles = board.getTilesByNumber(roll);
-//     std::cout << "Number of tiles with roll " << roll << ": " << rolledTiles.size() << std::endl;
-
-//     // Distribute resources based on settlements and cities
-//     for (auto* tile : rolledTiles) {
-//         int tileNumber = tile->getNumber();
-//         std::cout << "Processing tile number: " << tileNumber << std::endl;
-
-//         if (ResourceTile* resourceTile = dynamic_cast<ResourceTile*>(tile)) {
-//             if (board.hasSettlementOrCityOnTile(name, tileNumber)) {
-//                 int resourceCount = 1; // Default resource count for settlement
-//                 if (board.canAddCity(tileNumber)) {
-//                     resourceCount = 2; // Upgrade to city, so resource count is 2
-//                     std::cout << "City found on tile " << tileNumber << ", resource count: " << resourceCount << std::endl;
-//                 } else {
-//                     std::cout << "Settlement found on tile " << tileNumber << ", resource count: " << resourceCount << std::endl;
-//                 }
-
-//                 // Add resources to the player
-//                 Resource resource = resourceTile->produceResource();
-//                 std::cout << "Adding resource: " << resourceToString(resource) << " x " << resourceCount << " to player " << name << std::endl;
-//                 addResource(resource, resourceCount);
-//             } else {
-//                 std::cout << "No settlement or city for player " << name << " on tile " << tileNumber << std::endl;
-//             }
-//         } else {
-//             std::cerr << "Unknown tile type encountered." << std::endl;
-//         }
-//     }
-// }
-
-
 
 std::string Player::resourceToString(Resource resource) {
     switch (resource) {
@@ -354,6 +312,7 @@ void Player::addCity(int point, Board& board) {
     for (auto& settlement : settlements) {
         if (settlement.getPoint() == point && settlement.getPlace() == this->name) {
             hasSettlement = true;
+            settlement.setIsCity(true); // Mark the settlement as a city
             break;
         }
     }

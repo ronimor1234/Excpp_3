@@ -169,6 +169,21 @@ int main() {
 
         cout << endl;
     }
+    p1.addResource(Resource::Ore, 3);
+    p1.addResource(Resource::Wheat, 2);
+    int cityPoint1 = 44;
+    catan.addCityToPlayer(p1, cityPoint1, board);
+
+    p2.addResource(Resource::Ore, 3);
+    p2.addResource(Resource::Wheat, 2);
+    int cityPoint2 = 28;
+    catan.addCityToPlayer(p2, cityPoint2, board);
+
+    p3.addResource(Resource::Ore, 3);
+    p3.addResource(Resource::Wheat, 2);
+    int cityPoint3 = 11;
+    catan.addCityToPlayer(p3, cityPoint3, board);
+
     // Add resources for demonstration after game turns
     p1.addResource(Resource::Sheep, 3);
     p2.addResource(Resource::Sheep, 2);
