@@ -1,4 +1,4 @@
-//ID: 208018028, Mail: ronimordechai70@gmail.com
+// ID: 208018028, Mail: ronimordechai70@gmail.com
 
 #ifndef DEVELOPMENT_CARD_HPP
 #define DEVELOPMENT_CARD_HPP
@@ -10,68 +10,83 @@
 
 namespace ariel {
 
-// Forward declaration of Catan class
-class Catan;
+    // Forward declaration of Catan class
+    class Catan;
 
-class DevelopmentCard {
-private:
-    bool used;
+    // Abstract base class for development cards
+    class DevelopmentCard {
+    private:
+        bool used; // Indicates if the card has been used
 
-public:
-    DevelopmentCard() : used(false) {}
+    public:
+        DevelopmentCard() : used(false) {}
 
-    virtual std::string getType() const = 0;
-    virtual void applyEffect(Player& player, Catan& game) = 0;
+        // Pure virtual function to get the type of the card
+        virtual std::string getType() const = 0;
 
-    std::string getName() const { return getType(); }
-    bool isUsed() const { return used; }
-    void setUsed(bool value) { used = value; }
+        // Pure virtual function to apply the effect of the card
+        virtual void applyEffect(Player& player, Catan& game) = 0;
 
-    virtual ~DevelopmentCard() = default;
-};
+        // Get the name of the card (same as getType() for this base class)
+        std::string getName() const { return getType(); }
 
-class KnightCard : public DevelopmentCard {
-public:
-    std::string getType() const override { return "Knight"; }
-    void applyEffect(Player& player, Catan& game) override;
-};
+        // Check if the card has been used
+        bool isUsed() const { return used; }
 
-class VictoryPointCard : public DevelopmentCard {
-public:
-    std::string getType() const override { return "Victory Point"; }
-    void applyEffect(Player& player, Catan& game) override;
-};
+        // Set the used status of the card
+        void setUsed(bool value) { used = value; }
 
-class MonopolyCard : public DevelopmentCard {
-private:
-    Resource chosenResource;
+        // Virtual destructor for proper cleanup
+        virtual ~DevelopmentCard() = default;
+    };
 
-public:
-    MonopolyCard() = default; // Default constructor
-    MonopolyCard(Resource resource) : chosenResource(resource) {}
+    // Implementation of Knight development card
+    class KnightCard : public DevelopmentCard {
+    public:
+        std::string getType() const override { return "Knight"; }
+        void applyEffect(Player& player, Catan& game) override;
+    };
 
-    std::string getType() const override { return "Monopoly"; }
-    void applyEffect(Player& player, Catan& catan) override;
-};
+    // Implementation of Victory Point development card
+    class VictoryPointCard : public DevelopmentCard {
+    public:
+        std::string getType() const override { return "Victory Point"; }
+        void applyEffect(Player& player, Catan& game) override;
+    };
 
-class YearOfPlentyCard : public DevelopmentCard {
-private:
-    Resource firstResource;
-    Resource secondResource;
+    // Implementation of Monopoly development card
+    class MonopolyCard : public DevelopmentCard {
+    private:
+        Resource chosenResource; // Resource type to monopolize
 
-public:
-    YearOfPlentyCard(Resource resource1, Resource resource2) 
-        : firstResource(resource1), secondResource(resource2) {}
+    public:
+        MonopolyCard() = default; // Default constructor
+        MonopolyCard(Resource resource) : chosenResource(resource) {}
 
-    std::string getType() const override { return "Year of Plenty"; }
-    void applyEffect(Player& player, Catan& game) override;
-};
+        std::string getType() const override { return "Monopoly"; }
+        void applyEffect(Player& player, Catan& catan) override;
+    };
 
-class RoadConstructionCard : public DevelopmentCard {
-public:
-    std::string getType() const override { return "Road Construction"; }
-    void applyEffect(Player& player, Catan& game) override;
-};
+    // Implementation of Year of Plenty development card
+    class YearOfPlentyCard : public DevelopmentCard {
+    private:
+        Resource firstResource;
+        Resource secondResource;
+
+    public:
+        YearOfPlentyCard(Resource resource1, Resource resource2) 
+            : firstResource(resource1), secondResource(resource2) {}
+
+        std::string getType() const override { return "Year of Plenty"; }
+        void applyEffect(Player& player, Catan& game) override;
+    };
+
+    // Implementation of Road Construction development card
+    class RoadConstructionCard : public DevelopmentCard {
+    public:
+        std::string getType() const override { return "Road Construction"; }
+        void applyEffect(Player& player, Catan& game) override;
+    };
 
 } // namespace ariel
 

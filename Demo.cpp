@@ -1,6 +1,6 @@
 //ID: 208018028, Mail: ronimordechai70@gmail.com
 /*
- * Demo file for Catan Game.
+ * Demo file for Catan Game not a real legal game!
 */
 
 #include <iostream>
@@ -18,6 +18,8 @@ using namespace std;
 using namespace ariel;
 
 int main() {
+    cout << "#### DEMO TEST FOR THE GAME!! ####" << endl;
+    cout << "\n";
     cout << "#### START GAME ####" << endl;
 
     // Create players
@@ -30,7 +32,7 @@ int main() {
     cout << "\nStarting the game...\n";
 
     // Starting the game. Every player places two settlements and two roads.
-    catan.ChooseStartingPlayer();   // Assume it's Amit.
+    catan.chooseStartingPlayer();   
     std::cout << std::endl;
     cout << "\n";
 
@@ -41,7 +43,6 @@ int main() {
     board.printBoard();
     cout << "\n";
 
-    
     // First player places initial settlement and roads
     catan.placeInitialSettlement(p1, 41, 42, board); // Settlement at 41, Road from 41 to 42
     cout << "\n";
@@ -54,13 +55,16 @@ int main() {
     catan.placeInitialSettlement(p3, 14, 15, board); // Settlement at 14, Road from 14 to 16
     cout << "\n";
 
-    // Second settlements
+    //revers order
+    // Second settlements - the third player
     catan.placeSecondSettlement(p3, 11, 12, board); // Settlement at 16, Road from 16 to 18
     cout << "\n";
 
+    // Second settlements - the second player
     catan.placeSecondSettlement(p2, 28, 29, board); // Settlement at 28, Road from 28 to 30
     cout << "\n";
 
+    // Second settlements - the first player
     catan.placeSecondSettlement(p1, 44, 45, board); // Settlement at 43, Road from 43 to 45
     cout << "\n";
 
@@ -69,20 +73,19 @@ int main() {
         cout << "### ROUND " << i << " ###" << endl;
 
         // Player 1 turn
-        catan.rollDice(p1); // Let's say it's 4.
-        // p1.placeRoad({"Forest", "Hills"}, {5, 6}, board);
+        catan.rollDice(p1); 
         p1.endTurn();
 
         // Player 2 turn
-        catan.rollDice(p2); // Let's say it's 9.
+        catan.rollDice(p2); 
         p2.endTurn();
 
         // Player 3 turn
-        catan.rollDice(p3); // Let's say it's 3.
+        catan.rollDice(p3); 
         p3.endTurn();
 
         // Player 1 turn
-        catan.rollDice(p1); // Let's say it's 6.
+        catan.rollDice(p1); 
         p1.trade(p2, "wood", "brick", 1, 1);
         p1.addResource(Resource::Ore, 1);
         p1.addResource(Resource::Sheep, 1);
@@ -98,7 +101,8 @@ int main() {
         p1.endTurn();
 
         // Player 2 turn
-        catan.rollDice(p2); // Let's say it's 9.
+        catan.rollDice(p2); 
+        //add recource to be able to buy the development card
         p2.addResource(Resource::Ore, 1);
         p2.addResource(Resource::Sheep, 1);
         p2.addResource(Resource::Wheat, 1);
@@ -111,24 +115,21 @@ int main() {
             cerr << "Cannot use development card: " << e.what() << endl;
         }
         
-
         p2.endTurn();
 
-       
-        p1.addResource(Resource::Ore, 3);
-        p1.addResource(Resource::Wheat, 2);
-       
-
-         // Debug: Print Player 1's resources
+        // Debug: Print Player 1's resources
         cout << "Player 1 resources after addition:" << endl;
         cout << "Ore: " << p1.getResource(Resource::Ore) << endl;
         cout << "Wheat: " << p1.getResource(Resource::Wheat) << endl;
 
+        //add recource to be able to buy the city
+        p1.addResource(Resource::Ore, 3);
+        p1.addResource(Resource::Wheat, 2);
         int cityPoint = 41;
         catan.addCityToPlayer(p1, cityPoint, board);
 
         // Player 2 turn
-        catan.rollDice(p3); // Let's say it's 9.
+        catan.rollDice(p3); 
         p3.addResource(Resource::Ore, 1);
         p3.addResource(Resource::Sheep, 1);
         p3.addResource(Resource::Wheat, 1);
@@ -169,21 +170,9 @@ int main() {
 
         cout << endl;
     }
-    p1.addResource(Resource::Ore, 3);
-    p1.addResource(Resource::Wheat, 2);
-    int cityPoint1 = 44;
-    catan.addCityToPlayer(p1, cityPoint1, board);
 
-    p2.addResource(Resource::Ore, 3);
-    p2.addResource(Resource::Wheat, 2);
-    int cityPoint2 = 28;
-    catan.addCityToPlayer(p2, cityPoint2, board);
 
-    p3.addResource(Resource::Ore, 3);
-    p3.addResource(Resource::Wheat, 2);
-    int cityPoint3 = 11;
-    catan.addCityToPlayer(p3, cityPoint3, board);
-
+    cout << "Test for Monopoly Card" << endl;
     // Add resources for demonstration after game turns
     p1.addResource(Resource::Sheep, 3);
     p2.addResource(Resource::Sheep, 2);
@@ -237,6 +226,22 @@ int main() {
     cout << "Wheat: " << p3.getResource(Resource::Wheat) << endl;
     cout << "Ore: " << p3.getResource(Resource::Ore) << endl;
 
+    cout << "more Test- check if the player get his recource when player roll the dice also if there is city" << endl;
+    p1.addResource(Resource::Ore, 3);
+    p1.addResource(Resource::Wheat, 2);
+    int cityPoint1 = 44;
+    catan.addCityToPlayer(p1, cityPoint1, board);
+
+    p2.addResource(Resource::Ore, 3);
+    p2.addResource(Resource::Wheat, 2);
+    int cityPoint2 = 28;
+    catan.addCityToPlayer(p2, cityPoint2, board);
+
+    p3.addResource(Resource::Ore, 3);
+    p3.addResource(Resource::Wheat, 2);
+    int cityPoint3 = 11;
+    catan.addCityToPlayer(p3, cityPoint3, board);
+
     std:: cout<< "checks the roll dice:" << std:: endl;
         // Print resources of each player after distribution
         cout << "Player 1 resources before distribution:" << endl;
@@ -260,15 +265,15 @@ int main() {
         cout << "Wheat: " << p3.getResource(Resource::Wheat) << endl;
         cout << "Ore: " << p3.getResource(Resource::Ore) << endl;
         // Player 1 turn
-        catan.rollDice(p1); // Let's say it's 4.
+        catan.rollDice(p1); 
         p1.endTurn();
 
         // Player 2 turn
-        catan.rollDice(p2); // Let's say it's 9.
+        catan.rollDice(p2); 
         p2.endTurn();
 
         // Player 3 turn
-        catan.rollDice(p3); // Let's say it's 3.
+        catan.rollDice(p3); 
         p3.endTurn();
 
         // Print resources of each player after distribution

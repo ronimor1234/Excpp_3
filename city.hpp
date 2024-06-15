@@ -18,11 +18,11 @@ namespace ariel {
 
     public:
         City(Player& owner, Tile& location);  // Constructor declaration
-        bool isSettlement() const;  // Function declaration
-        bool isCity() const;  // Function declaration
-        int getPoint() const { return point; }
-        std::string getOwner() const;
-        int getPlaceNum() const; // Getter for placeNum
+        bool isSettlement() const;            // Function declaration
+        bool isCity() const;                  // Function declaration
+        int getPoint() const { return point;}
+        std::string getOwner() const;         // Getter for owner
+        int getPlaceNum() const;              // Getter for placeNum
     };
 
 } // namespace ariel

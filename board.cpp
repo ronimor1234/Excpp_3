@@ -6,14 +6,13 @@
 
 namespace ariel {
 
+    // Constructor for Board, initializes adjacency list and board
     Board::Board() {
         initializeAdjacencyList();
         initializeBoard();
     }
-
-    Board::Board(const std::vector<Player>& players)
-    : players(players){}
     
+    // Initialize the adjacency list of the point on the board
     void Board::initializeAdjacencyList() {
         adjacencyList = {
             {1, {2, 9}}, {2, {1, 3}}, {3, {2, 4, 11}}, {4, {3, 5}}, {5, {4, 6, 13}}, 
@@ -32,6 +31,7 @@ namespace ariel {
         };
     }
 
+    // Initialize the board with tiles
     void Board::initializeBoard() {
         // Clear the tiles vector before adding new tiles
         tiles.clear();
@@ -60,6 +60,7 @@ namespace ariel {
             {"Pasture Land", 11, {44, 45, 46, 54, 53, 52}}
         };
 
+        // Populate the tiles vector with the predefined tiles
         for (const auto& tile : fixedTiles) {
             if (std::get<0>(tile) == "Desert") {
                 DesertTile desertTile(std::get<0>(tile), std::get<1>(tile));
@@ -143,23 +144,25 @@ namespace ariel {
         }
     }
 
+    // Check if a place is occupied on the board
     bool Board::isPlaceOccupied(int point) const {
-    for (const auto& place : occupiedPlaces) {
-        std::cout << "Checking place: " << place.first.first << " -> " << place.first.second << std::endl;
-        if (place.first.second == point) {
-            std::cout << "Place " << point << " is occupied." << std::endl;
-            return true;
+        for (const auto& place : occupiedPlaces) {
+            std::cout << "Checking place: " << place.first.first << " -> " << place.first.second << std::endl;
+            if (place.first.second == point) {
+                std::cout << "Place " << point << " is occupied." << std::endl;
+                return true;
+            }
         }
+        std::cout << "Place " << point << " is not occupied." << std::endl;
+        return false;
     }
-    std::cout << "Place " << point << " is not occupied." << std::endl;
-    return false;
-}
 
-  
+    // Get a tile object by point
     Tile& Board::getTile(int point) {
         return tiles[static_cast<std::vector<Tile>::size_type>(point)];
     }
 
+    // Check if two places are adjacent
     bool Board::areAdjacent(const std::pair<std::string, int>& a, const std::pair<std::string, int>& b) const {
         if (adjacencyList.find(a.second) != adjacencyList.end()) {
             const auto& neighbors = adjacencyList.at(a.second);
@@ -168,6 +171,8 @@ namespace ariel {
         return false;
     }
 
+
+    // Check if two places are within two edges of each other
     bool Board::isWithinTwoEdges(const std::pair<std::string, int>& a, const std::pair<std::string, int>& b) const {
         if (areAdjacent(a, b)) return true;
         if (adjacencyList.find(a.second) != adjacencyList.end()) {
@@ -179,6 +184,7 @@ namespace ariel {
         return false;
     }
 
+    // Get neighbors of a place
     std::vector<int> Board::getNeighbors(int point) const {
         if (adjacencyList.find(point) != adjacencyList.end()) {
             return adjacencyList.at(point);
@@ -186,19 +192,20 @@ namespace ariel {
         return {};
     }
 
-void ariel::Board::printBoard() {
-    std::cout << "####### THE BOARD OF THE GAME #######" << std::endl;
-    std::cout << "            sea      sea     sea     sea" << std::endl;
-    std::cout << "    sea  Mountains(10)  Pasture Land(2)  Forest(9)  sea" << std::endl;
-    std::cout << "  sea  Agricultural Land(12)  Hills(6)  Pasture Land(4)  Hills(10)  sea" << std::endl;
-    std::cout << "sea  Agricultural Land(9)  Forest(11)  Desert(7)  Forest(3)  Mountains(8)  sea" << std::endl;
-    std::cout << "  sea  Forest(8)  Mountains(3)  Agricultural Land(4)  Pasture Land(5)  sea" << std::endl;
-    std::cout << "    sea  Hills(5)  Agricultural Land(6)  Pasture Land(11)  sea" << std::endl;
-    std::cout << "            sea      sea      sea      sea" << std::endl;
-    std::cout << "#####################################" << std::endl;
-}
+// Print the board
+    void Board::printBoard() {
+        std::cout << "####### THE BOARD OF THE GAME #######" << std::endl;
+        std::cout << "            sea      sea     sea     sea" << std::endl;
+        std::cout << "    sea  Mountains(10)  Pasture Land(2)  Forest(9)  sea" << std::endl;
+        std::cout << "  sea  Agricultural Land(12)  Hills(6)  Pasture Land(4)  Hills(10)  sea" << std::endl;
+        std::cout << "sea  Agricultural Land(9)  Forest(11)  Desert(7)  Forest(3)  Mountains(8)  sea" << std::endl;
+        std::cout << "  sea  Forest(8)  Mountains(3)  Agricultural Land(4)  Pasture Land(5)  sea" << std::endl;
+        std::cout << "    sea  Hills(5)  Agricultural Land(6)  Pasture Land(11)  sea" << std::endl;
+        std::cout << "            sea      sea      sea      sea" << std::endl;
+        std::cout << "#####################################" << std::endl;
+    }
 
-
+    // Get column index from string
     int Board::columnIndex(const std::string& column) const {
         if (column.size() == 1) {
             return column[0] - 'A';
@@ -208,47 +215,48 @@ void ariel::Board::printBoard() {
         return -1;
     }
 
-bool Board::isPlaceAdjacentToPlayerRoad(const std::pair<std::string, int>& place, const Player& player) const {
-    auto it = adjacencyList.find(place.second);
-    if (it != adjacencyList.end()) {
-        const std::vector<int>& neighbors = it->second;
-        for (int neighbor : neighbors) {
-            if (player.hasRoadAt(neighbor)) {
-                return true;
+    // Check if a place is adjacent to a player's road
+    bool Board::isPlaceAdjacentToPlayerRoad(const std::pair<std::string, int>& place, const Player& player) const {
+        auto it = adjacencyList.find(place.second);
+        if (it != adjacencyList.end()) {
+            const std::vector<int>& neighbors = it->second;
+            for (int neighbor : neighbors) {
+                if (player.hasRoadAt(neighbor)) {
+                    return true;
+                }
             }
         }
+        return false;
     }
-    return false;
-}
 
+    // Check if a settlement point is valid for a player
     bool Board::isValidSettlementPoint(int point, const Player& player) {
         auto it = occupiedPlaces.find({player.getName(), point});
         return it == occupiedPlaces.end();
     }
 
-
+    // Check if a road placement is valid for a player
     bool Board::isValidRoad(int startPoint, int endPoint, const Player& player) const {
-    // Check if the player has a settlement or city at either startPoint or endPoint
-    if (player. hasSettlement(startPoint) || player. hasSettlement(endPoint)) {
-        return true;
+        // Check if the player has a settlement or city at either startPoint or endPoint
+        if (player.hasSettlement(startPoint) || player.hasSettlement(endPoint)) {
+            return true;
+        }
+
+        // Check if the player has a road at either startPoint or endPoint
+        if (player.hasRoadAt(startPoint) || player.hasRoadAt(endPoint)) {
+            return true;
+        }
+
+        // Check if the points are adjacent and free of roads
+        if (areAdjacent(std::make_pair(player.getName(), startPoint), std::make_pair(player.getName(), endPoint))) {
+            return true;
+        }
+
+        // Otherwise, the road placement is invalid
+        return false;
     }
 
-    // Check if the player has a road at either startPoint or endPoint
-    if (player.hasRoadAt(startPoint) || player.hasRoadAt(endPoint)) {
-        return true;
-    }
-
-    // Check if the points are adjacent and free of roads
-    if (areAdjacent(std::make_pair(player.getName(), startPoint), std::make_pair(player.getName(), endPoint))) {
-        return true;
-    }
-
-    // Otherwise, the road placement is invalid
-    return false;
-}
-
-
-
+    // Place a settlement on the board
     bool Board::placeSettlement(int point, const std::string& playerName) {
         // Check if the point is valid for placing a settlement
         if (!isPlaceOccupied(point)) {
@@ -266,116 +274,122 @@ bool Board::isPlaceAdjacentToPlayerRoad(const std::pair<std::string, int>& place
             return false;
         }
     }
-    
-    
+
+    // Place a road on the board
     bool Board::placeRoad(int startPoint, int endPoint, const Player& player) {
-    // Check if the road points are valid
-    if (isValidRoad(startPoint, endPoint, player)) {
-        // Example of using occupiedPlaces
-        occupiedPlaces[std::make_pair(player.getName(), startPoint)] = "Road";
-        occupiedPlaces[std::make_pair(player.getName(), endPoint)] = "Road";
-        
-        std::cout << "Placing road from " << startPoint << " to " << endPoint << std::endl;
-        
-        // Other logic for placing road
-        
-        return true;
-    } else {
-        std::cout << "Invalid road placement from " << startPoint << " to " << endPoint << std::endl;
-        return false;
-    }
-}
-
-
-bool Board::canAddCity(int point) const {
-    for (const auto& settlement : settlements) {
-        if (settlement.getPoint() == point && !settlement.getIsCity()) {
-            std::cout << "Found a settlement at point " << point << " that can be upgraded to a city." << std::endl;
-            return true; // Found a settlement that can be upgraded to a city
-        }
-    }
-    std::cout << "No settlement found at point " << point << " that can be upgraded to a city." << std::endl;
-    return false; // No settlement found at the specified point
-}
-
-void Board::upgradeSettlementToCity(int point, const std::string& playerName) {
-    // Update occupiedPlaces
-    for (auto& entry : occupiedPlaces) {
-        if (entry.first.second == point && entry.second == "Settlement") {
-            entry.second = "City";
-            break;
+        // Check if the road points are valid
+        if (isValidRoad(startPoint, endPoint, player)) {
+            // Example of using occupiedPlaces
+            occupiedPlaces[std::make_pair(player.getName(), startPoint)] = "Road";
+            occupiedPlaces[std::make_pair(player.getName(), endPoint)] = "Road";
+            
+            std::cout << "Placing road from " << startPoint << " to " << endPoint << std::endl;
+            
+            // Other logic for placing road
+            
+            return true;
+        } else {
+            std::cout << "Invalid road placement from " << startPoint << " to " << endPoint << std::endl;
+            return false;
         }
     }
 
-    // Find and update settlements vector
-    for (auto& settlement : settlements) {
-        if (settlement.getPoint() == point && settlement.getPlace() == playerName) {
-            settlement.upgradeToCity();
-            break;
+    // Check if a settlement can be upgraded to a city
+    bool Board::canAddCity(int point) const {
+        for (const auto& settlement : settlements) {
+            if (settlement.getPoint() == point && !settlement.getIsCity()) {
+                std::cout << "Found a settlement at point " << point << " that can be upgraded to a city." << std::endl;
+                return true; // Found a settlement that can be upgraded to a city
+            }
         }
-    }
-}
-
-    bool Board::hasSettlementOrCity(int point, const std::string& playerName) const {
-    std::cout << "Checking settlements and cities for player " << playerName << " at point " << point << std::endl;
-
-    bool foundSettlementOrCity = false;
-
-    for (const auto& settlement : settlements) {
-        if (settlement.getPoint() == point && settlement.getOwner() == playerName) {
-            std::cout << "Found settlement for player " << playerName << " at point " << point << std::endl;
-            foundSettlementOrCity = true;
-            break;
-        }
+        std::cout << "No settlement found at point " << point << " that can be upgraded to a city." << std::endl;
+        return false; // No settlement found at the specified point
     }
 
-    if (!foundSettlementOrCity) {
-        for (const auto& city : cities) {
-            if (city.getPoint() == point && city.getOwner() == playerName) {
-                std::cout << "Found city for player " << playerName << " at point " << point << std::endl;
-                foundSettlementOrCity = true;
+    // Upgrade a settlement to a city
+    void Board::upgradeSettlementToCity(int point, const std::string& playerName) {
+        // Update occupiedPlaces
+        for (auto& entry : occupiedPlaces) {
+            if (entry.first.second == point && entry.second == "Settlement") {
+                entry.second = "City";
+                break;
+            }
+        }
+
+        // Find and update settlements vector
+        for (auto& settlement : settlements) {
+            if (settlement.getPoint() == point && settlement.getPlace() == playerName) {
+                settlement.upgradeToCity();
                 break;
             }
         }
     }
 
-    if (!foundSettlementOrCity) {
-        std::cout << "No settlement or city for player " << playerName << " at point " << point << std::endl;
+    // Check if a player has a settlement or city at a specific point
+    bool Board::hasSettlementOrCity(int point, const std::string& playerName) const {
+        std::cout << "Checking settlements and cities for player " << playerName << " at point " << point << std::endl;
+
+        bool foundSettlementOrCity = false;
+
+        // Search in settlements vector for the player's presence
+        for (const auto& settlement : settlements) {
+            if (settlement.getPoint() == point && settlement.getOwner() == playerName) {
+                std::cout << "Found settlement for player " << playerName << " at point " << point << std::endl;
+                foundSettlementOrCity = true;
+                break;
+            }
+        }
+
+        // If not found in settlements, search in cities vector
+        if (!foundSettlementOrCity) {
+            for (const auto& city : cities) {
+                if (city.getPoint() == point && city.getOwner() == playerName) {
+                    std::cout << "Found city for player " << playerName << " at point " << point << std::endl;
+                    foundSettlementOrCity = true;
+                    break;
+                }
+            }
+        }
+        // If no settlement or city found, print a message
+        if (!foundSettlementOrCity) {
+            std::cout << "No settlement or city for player " << playerName << " at point " << point << std::endl;
+        }
+
+        // Return true if settlement or city was found, false otherwise
+        return foundSettlementOrCity;
     }
 
-    return foundSettlementOrCity;
-}
+    // Print the current state of the board
+    void Board::printBoardState() const {
+        // Print occupied places
+        std::cout << "Occupied Places:" << std::endl;
+        for (const auto& entry : occupiedPlaces) {
+            std::cout << "Player: " << entry.first.first << ", Point: " << entry.first.second << ", Type: " << entry.second << std::endl;
+        }
 
-void Board::printBoardState() const {
-    std::cout << "Occupied Places:" << std::endl;
-    for (const auto& entry : occupiedPlaces) {
-        std::cout << "Player: " << entry.first.first << ", Point: " << entry.first.second << ", Type: " << entry.second << std::endl;
-    }
-
-    // Print settlements
-    std::cout << "Settlements:" << std::endl;
-    for (const auto& settlement : settlements) {
-        std::cout << "Player: " << settlement.getPlace() << ", Point: " << settlement.getPoint() << ", Is City: " << (settlement.getIsCity() ? "Yes" : "No") << std::endl;
-    }
-}
-
-
-std::vector<Tile*> Board::getTilesByNumber(int number) const {
-    std::vector<Tile*> result;
-    for (const auto& entry : tileMap) {
-        if (entry.second->getNumber() == number) {
-            result.push_back(entry.second);
+        // Print settlements
+        std::cout << "Settlements:" << std::endl;
+        for (const auto& settlement : settlements) {
+            std::cout << "Player: " << settlement.getPlace() << ", Point: " << settlement.getPoint() << ", Is City: " << (settlement.getIsCity() ? "Yes" : "No") << std::endl;
         }
     }
-    std::cout << "Tiles found with number " << number << ": " << result.size() << std::endl;
-    return result;
-}
 
+    // Get tiles by number
+    std::vector<Tile*> Board::getTilesByNumber(int number) const {
+        std::vector<Tile*> result;
+        // Search through tileMap for tiles with the specified number
+        for (const auto& entry : tileMap) {
+            if (entry.second->getNumber() == number) {
+                result.push_back(entry.second);
+            }
+        }
+        // Print the number of tiles found with the specified number
+        std::cout << "Tiles found with number " << number << ": " << result.size() << std::endl;
+        return result;
+    }
 
-
-  bool Board::hasSettlementOrCityOnTile(const std::string& playerName, int tileNumber) const {
-        // Check if the player has a settlement or city on the specified tile number
-
+    // Check if the player has a settlement or city on the specified tile number
+    bool Board::hasSettlementOrCityOnTile(const std::string& playerName, int tileNumber) const {
         // Search in settlements vector for the player's presence
         for (const auto& settlement : settlements) {
             if (settlement.getPlaceNum() == tileNumber && settlement.getOwner() == playerName) {
@@ -392,38 +406,7 @@ std::vector<Tile*> Board::getTilesByNumber(int number) const {
 
         return false;
     }
-
-
-// Helper function to get player ID by name
-const Player* Board::getPlayerByName(const std::string& playerName) const {
-    for (auto it = players.begin(); it != players.end(); ++it) {
-        std::cout << "Checking player: " << it->getName() << std::endl;
-        if (it->getName() == playerName) {
-            std::cout << "Player found: " << it->getName() << std::endl;
-            return &(*it);
-        }
-    }
-    std::cout << "Player not found with name: " << playerName << std::endl;
-    return nullptr;
-}
-
- // Function definition
-    std::string resourceToString(Resource resource) {
-        switch (resource) {
-            case Resource::Brick:
-                return "Brick";
-            case Resource::Wood:
-                return "Wood";
-            case Resource::Sheep:
-                return "Sheep";
-            case Resource::Wheat:
-                return "Wheat";
-            case Resource::Ore:
-                return "Ore";
-            default:
-                return "Unknown";
-        }
-    }
+ 
 } // namespace ariel
 
 

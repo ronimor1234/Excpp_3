@@ -1,4 +1,4 @@
-// //ID: 208018028, Mail: ronimordechai70@gmail.com
+// ID: 208018028, Mail: ronimordechai70@gmail.com
 #ifndef CATAN_HPP
 #define CATAN_HPP
 
@@ -12,45 +12,63 @@
 
 namespace ariel {
     class Catan {
-        private:
-        std::vector<Player> players;
-        Board board;
-        Player* currentPlayer;
-        Player* startingPlayer;
+    private:
+        std::vector<Player> players; // Vector to store all players
+        Board board; // The game board
+        Player* currentPlayer; // Pointer to the current player
+        Player* startingPlayer; // Pointer to the starting player
+        int point;
+        int lastRoll; // Store the last rolled number
 
-        public:
-
+    public:
+        // Constructor that initializes the game with three players
         Catan(const Player& p1, const Player& p2, const Player& p3);
-    
+        
+        // for test: constructor to handle more than 3 players
+        Catan(const Player& p1, const Player& p2, const Player& p3, const Player& p4);
+
+        // Method to initialize the game
         void initialize();
 
         // Method to choose the starting player
-        void ChooseStartingPlayer();
+        void chooseStartingPlayer();
 
+        // Method to place the initial settlement and road for a player
         void placeInitialSettlement(Player& player, int settlementPoint, int roadPoint, Board& board);
+
+        // Method to place the second settlement and road for a player
         void placeSecondSettlement(Player& player, int settlementPoint, int roadPoint, Board& board);
-    
-        // Getter for starting player
+
+        // Getter for the starting player
         Player* getStartingPlayer() const { return startingPlayer; }
 
-        // Method to get the current board
+        // Method to get the current game board
         Board& getBoard();
 
-        // Method to print the winner
+        // Method to print the winner of the game
         void printWinner();
 
-        // Method to add city
+        // Method to add a city to a player
         void addCityToPlayer(Player& player, int point, Board& board);
 
+        // Method to collect monopoly resources for a player
         void collectMonopolyResources(Player& currentPlayer, Resource chosenResource);
-        std:: string resourceToString(Resource resource);
+
+        // Method to convert a Resource enum to string
+        std::string resourceToString(Resource resource);
+
+        // Getter for the vector of players
         std::vector<Player>& getPlayers() { return players; }
-        Player& getPlayerByName(const std::string& name);
+
+        // Method to get a player by index
         Player& getPlayer(int index);
-        void distributeResources(int roll);
+
+        // Method to roll the dice for a player
         void rollDice(Player& player);
 
-        };
+        // Get the last rolled number
+        int getLastRoll() const {return lastRoll;}
+    };
 } // namespace ariel
-#endif // CATAN_HPP
 
+#endif // CATAN_HPP
