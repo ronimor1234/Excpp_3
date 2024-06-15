@@ -27,9 +27,6 @@ namespace ariel {
         this->isCity = isCity;
     }
 
-    // bool Settlement::isCity() const {
-    //     return isCity;
-    // }
 
     const std::string& Settlement::getOwner() const {
         return owner;

@@ -65,45 +65,6 @@ void Player::placeRoad(int startPoint, int endPoint, Board& board) {
         }
     }
 
-// Check if a road can be placed between two points
-// bool Player::canPlaceRoad(int startPoint, int endPoint, const Board& board) const {
-//     std::cout << "Checking road placement for " << getName() << " from " << startPoint << " to " << endPoint << std::endl;
-
-//     // First, check if the player has settlements or cities at both start and end points
-//     if (!hasSettlementOrCity(startPoint) || !hasSettlementOrCity(endPoint)) {
-//         std::cout << "No settlement or city for " << getName() << " at start or end point." << std::endl;
-//         return false;
-//     }
-
-//     // Check if there is already a road at the start or end point
-//     if (board.isPlaceOccupied(startPoint) || board.isPlaceOccupied(endPoint)) {
-//         std::cout << "Road already occupied at startPoint " << startPoint << " or endPoint " << endPoint << std::endl;
-//         return false;
-//     }
-
-//     // For the first two roads, allow placement without additional checks
-//     if (roads.size() < 2) {
-//         return true;
-//     }
-
-//     // Additional checks for subsequent roads
-//     auto startPair = std::make_pair(startPoint, endPoint);
-//     auto endPair = std::make_pair(endPoint, startPoint);
-//     if (roadConnections.find(startPair) == roadConnections.end() &&
-//         roadConnections.find(endPair) == roadConnections.end()) {
-//         std::cout << "No road connection found between " << startPoint << " and " << endPoint << std::endl;
-//         return false;
-//     }
-
-//     // Check adjacency between the start and end points
-//     if (!board.areAdjacent(std::make_pair(getName(), startPoint), std::make_pair(getName(), endPoint))) {
-//         std::cout << "Points " << startPoint << " and " << endPoint << " are not adjacent" << std::endl;
-//         return false;
-//     }
-
-//     // If all checks pass, road can be placed
-//     return true;
-// }
 
 bool Player::canPlaceRoad(int startPoint, int endPoint, const Board& board) const {
     // Check if the player has a settlement or city at either startPoint or endPoint
@@ -126,8 +87,6 @@ bool Player::canPlaceRoad(int startPoint, int endPoint, const Board& board) cons
 }
 
 
-
-
 // Get the road connections owned by the player
 const std::set<std::pair<int, int>>& Player::getRoadConnections() const {
     return roadConnections;
@@ -142,11 +101,58 @@ std::set<int> Player::getSettlementLocations() const {
     return locations;
 }
 
-// Roll the dice and print the result
-void Player::rollDice() {
-    int roll = std::rand() % 6 + 1 + std::rand() % 6 + 1; // Rolling two six-sided dice
-    std::cout << name << " rolled: " << roll << std::endl;
-    // Implement resource distribution logic in the Catan class
+// void Player::rollDice(Catan& catan) {
+//     int roll = std::rand() % 6 + 1 + std::rand() % 6 + 1; // Rolling two six-sided dice
+//     std::cout << name << " rolled: " << roll << std::endl;
+//     catan.distributeResources(roll);
+// }
+
+//     void Player::distributeResources(Board& board, int roll) {
+//     std::cout << name << " rolled: " << roll << std::endl;
+
+//     // Get all tiles with the rolled number
+//     std::vector<Tile*> rolledTiles = board.getTilesByNumber(roll);
+//     std::cout << "Number of tiles with roll " << roll << ": " << rolledTiles.size() << std::endl;
+
+//     // Distribute resources based on settlements and cities
+//     for (auto* tile : rolledTiles) {
+//         int tileNumber = tile->getNumber();
+//         std::cout << "Processing tile number: " << tileNumber << std::endl;
+
+//         if (ResourceTile* resourceTile = dynamic_cast<ResourceTile*>(tile)) {
+//             if (board.hasSettlementOrCityOnTile(name, tileNumber)) {
+//                 int resourceCount = 1; // Default resource count for settlement
+//                 if (board.canAddCity(tileNumber)) {
+//                     resourceCount = 2; // Upgrade to city, so resource count is 2
+//                     std::cout << "City found on tile " << tileNumber << ", resource count: " << resourceCount << std::endl;
+//                 } else {
+//                     std::cout << "Settlement found on tile " << tileNumber << ", resource count: " << resourceCount << std::endl;
+//                 }
+
+//                 // Add resources to the player
+//                 Resource resource = resourceTile->produceResource();
+//                 std::cout << "Adding resource: " << resourceToString(resource) << " x " << resourceCount << " to player " << name << std::endl;
+//                 addResource(resource, resourceCount);
+//             } else {
+//                 std::cout << "No settlement or city for player " << name << " on tile " << tileNumber << std::endl;
+//             }
+//         } else {
+//             std::cerr << "Unknown tile type encountered." << std::endl;
+//         }
+//     }
+// }
+
+
+
+std::string Player::resourceToString(Resource resource) {
+    switch (resource) {
+        case Resource::Brick: return "Brick";
+        case Resource::Wood: return "Wood";
+        case Resource::Sheep: return "Sheep";
+        case Resource::Wheat: return "Wheat";
+        case Resource::Ore: return "Ore";
+        default: return "Unknown";
+    }
 }
 
 // End the player's turn
@@ -184,47 +190,6 @@ void Player::buyDevelopmentCard(std::shared_ptr<DevelopmentCard> card) {
         std::cerr << "Cannot buy a development card due to insufficient resources." << std::endl;
     }
 }
-// void Player::buyDevelopmentCard(int cardNumber) {
-//     if (cardNumber < 1 || cardNumber > 5) {
-//         throw std::invalid_argument("Invalid card number.");
-//     }
-
-//     // Placeholder for checking and removing resources
-//     if (resources[Resource::Sheep] >= 1 && resources[Resource::Wheat] >= 1 && resources[Resource::Ore] >= 1) {
-//         resources[Resource::Sheep] -= 1;
-//         resources[Resource::Wheat] -= 1;
-//         resources[Resource::Ore] -= 1;
-
-//         // Create a random development card
-//         std::shared_ptr<DevelopmentCard> card;
-//         switch (cardNumber) {
-//             case 1:
-//                 card = std::make_shared<VictoryPointCard>();
-//                 break;
-//             case 2:
-//                 card = std::make_shared<YearOfPlentyCard>(Resource::Brick, Resource::Brick);
-//                 break;
-//             case 3:
-//                 card = std::make_shared<RoadConstructionCard>(Road(/* specify road */));
-//                 break;
-//             case 4:
-//                 card = std::make_shared<MonopolyCard>(Resource::Brick);
-//                 break;
-//             case 5:
-//                 card = std::make_shared<KnightCard>();
-//                 break;
-//             default:
-//                 throw std::invalid_argument("Invalid card number.");
-//         }
-
-//         developmentCards.push_back(card);
-//         std::cout << name << " bought a development card." << std::endl;
-//     } else {
-//         std::cerr << "Cannot buy a development card due to insufficient resources." << std::endl;
-//     }
-// }
-
-
 
 
 void Player::useDevelopmentCard(const std::string& cardName, Catan& catan) {
@@ -242,22 +207,6 @@ void Player::useDevelopmentCard(const std::string& cardName, Catan& catan) {
 }
 
 
-// void Player::useDevelopmentCard(int cardNumber, Catan& game) {
-//     if (cardNumber < 0 || static_cast<size_t>(cardNumber) >= developmentCards.size()) {
-//         throw std::invalid_argument("Invalid card number.");
-//     }
-
-//     if (!developmentCards[cardNumber]->isUsed()) {
-//         developmentCards[cardNumber]->applyEffect(*this, game); // Pass both Player and Catan objects
-//         developmentCards[cardNumber]->setUsed(true); // Mark the card as used
-//     } else {
-//         throw std::invalid_argument("Development card already used.");
-//     }
-// }
-
-
-
-
 // Print the player's current points
 void Player::printPoints() const {
     std::cout << name << " has " << points << " points." << std::endl;
@@ -273,14 +222,6 @@ int Player::getPoints() const {
     return points;
 }
 
-// Get the amount of a specific resource owned by the player
-// int Player::getResource(Resource resource) const {
-//     auto it = resources.find(resource);
-//     if (it != resources.end()) {
-//         return it->second;
-//     }
-//     return 0;
-// }
 
 int Player::getResource(Resource resource) const {
    auto it = resources.find(resource);
@@ -304,17 +245,6 @@ void Player::removeResource(Resource resource, int amount) {
         resources[resource] = 0;
     }
 }
-// if (resources.find(resource) != resources.end()) {
-//         if (resources[resource] >= amount) {
-//             resources[resource] -= amount;
-//         } else {
-//             resources[resource] = 0;
-//         }
-//     } else {
-//         // Handle case where resource is not found (this should not happen if the resource map is properly initialized)
-//         throw std::out_of_range("Resource not found in player's inventory.");
-//     }
-// }
 
 // Get a reference to the vector of roads owned by the player
 const std::vector<Road>& Player::getRoads() const {
@@ -324,6 +254,24 @@ const std::vector<Road>& Player::getRoads() const {
 // Get a reference to the vector of settlements owned by the player
 const std::vector<Settlement>& Player::getSettlements() const {
     return settlements;
+}
+bool Player::hasSettlementAt(int point) const {
+    for (const auto& settlement : settlements) {
+        if (settlement.getPoint() == point) {
+            return true;
+        }
+    }
+    return false;
+}
+
+int Player::numSettlementsAt(int point) const {
+    int count = 0;
+    for (const auto& settlement : settlements) {
+        if (settlement.getPoint() == point) {
+            count++;
+        }
+    }
+    return count;
 }
 
 // Add a settlement to the player's list of settlements
@@ -382,8 +330,6 @@ void Player::addRoad(int startPoint, int endPoint, Board& board) {
         std::cerr << getName() << " cannot add road due to insufficient resources." << std::endl;
     }
 }
-
-
 
 
 // Check if the player has a road between two points
@@ -457,6 +403,15 @@ void Player::printPlayerInfo() const {
 bool Player::hasSettlementOrCity(int point) const {
     for (const auto& settlement : settlements) {
         if (settlement.getPlaceNum() == point) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Player::hasCityAt(int point) const {
+    for (const City& city : cities) {
+        if (city.getPoint() == point) {
             return true;
         }
     }

@@ -21,4 +21,8 @@ namespace ariel {
         return owner.getName();
     }
 
+    int City::getPlaceNum() const {
+        return placeNum;
+    }
+
 } // namespace ariel

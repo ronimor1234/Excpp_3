@@ -16,16 +16,4 @@ namespace ariel{
         return end;
     }
 
-//     bool Road::isConnectedTo(const std::string& place, int placeNum) const {
-//     // Implement your logic to check if this road is connected to the specified place
-//     // Example implementation:
-//     // Assuming 'connectedPlaces' is a member variable of type std::vector<std::pair<std::string, int>>
-//     // for (const auto& connectedPlace : connectedPlaces) {
-//     //     if (connectedPlace.first == place && connectedPlace.second == placeNum) {
-//     //         return true;
-//     //     }
-//     // }
-//     return false;
-// }
-
 } // namespace ariel

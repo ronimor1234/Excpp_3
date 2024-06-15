@@ -45,6 +45,11 @@ namespace ariel {
         void collectMonopolyResources(Player& currentPlayer, Resource chosenResource);
         std:: string resourceToString(Resource resource);
         std::vector<Player>& getPlayers() { return players; }
+        Player& getPlayerByName(const std::string& name);
+        Player& getPlayer(int index);
+        void distributeResources(int roll);
+        void rollDice(Player& player);
+        // void distributeResources(int diceRoll);
 
         };
 } // namespace ariel

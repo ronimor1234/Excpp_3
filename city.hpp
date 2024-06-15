@@ -15,6 +15,7 @@ namespace ariel {
         Player& owner;
         Tile& location;
         int point;
+        int placeNum;
 
     public:
         City(Player& owner, Tile& location);  // Constructor declaration
@@ -22,6 +23,7 @@ namespace ariel {
         bool isCity() const;  // Function declaration
         int getPoint() const { return point; }
         std::string getOwner() const;
+        int getPlaceNum() const; // Getter for placeNum
     };
 
 } // namespace ariel

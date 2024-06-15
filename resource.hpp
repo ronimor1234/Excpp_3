@@ -10,8 +10,10 @@ namespace ariel {
         Sheep,
         Wheat,
         Ore,
-        // None  // Add None as a possible resource
     };
+
+    // Function declaration
+    inline std::string resourceToString(Resource resource);
 
 } // namespace ariel
 

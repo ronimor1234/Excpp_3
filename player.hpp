@@ -1,76 +1,5 @@
-// // //ID: 208018028, Mail: ronimordechai70@gmail.com
-// #ifndef PLAYER_HPP
-// #define PLAYER_HPP
-// #include <set>
-// #include <string>
-// #include <vector>
-// #include <memory>
-// #include <map>
-// #include "settlement.hpp"
-// #include "road.hpp"
-// #include "development_card.hpp"
-// #include "resource.hpp" 
-// #include "board.hpp"
-// #include "tile.hpp"
+// ID: 208018028, Mail: ronimordechai70@gmail.com
 
-// namespace ariel {
-//     class Tile;
-//     class Settlement;
-//     class Road;
-//     class Board;
-
-// class Player {
-// private:
-//     std::string name;
-//     std::vector<Settlement> settlements;
-//     std::vector<Road> roads;
-//     std::map<Resource, int> resources; 
-//     std::vector<std::shared_ptr<DevelopmentCard>> developmentCards;
-//     int points;
-//     std::set<std::pair<std::string, int>> roadConnections;
-    
-// public:
-    
-//     Player() : name("Default Player"), points(0) {}
-
-//     Player(const std::string& name);
-
-//     Player(const char* name) : name(name), points(0) {}
-    
-//     void placeSettlement(const std::vector<std::string>& places, const std::vector<int>& placesNum, Board& board);
-//     bool canPlaceSettlement(const std::vector<std::string>& places, const std::vector<int>& placesNum, const Board& board) const;
-//     void placeRoad(const std::vector<std::string>& places, const std::vector<int>& placesNum, Board& board);
-//     bool canPlaceRoad(const std::vector<std::string>& places, const std::vector<int>& placesNum, const Board& board) const;
-//     void rollDice();
-//     void endTurn();
-//     void trade(Player& other, const std::string& give, const std::string& receive, int giveAmount, int receiveAmount); // Use Resource enum here
-//     void buyDevelopmentCard(std::shared_ptr<DevelopmentCard> card);
-//     void printPoints() const;
-
-//     // Getters and Setters
-//     std::string getName() const;
-//     int getPoints() const;
-//     int getResource(Resource resource) const;
-//     // Methods to add settlements and roads
-//     void addSettlement(const std::vector<std::string>& places, const std::vector<int>& placesNum);
-//     void addRoad(const std::vector<std::string>& places, const std::vector<int>& placesNum);
-
-//     const std::set<std::pair<std::string, int>>& getRoadConnections() const;
-//     std::set<std::pair<std::string, int>> getSettlementLocations() const;
-//     // std::set<std::pair<std::string, int>> getSettlements() const;
-
-//     // Resource management
-//     void addResource(Resource resource, int amount);
-//     void removeResource(Resource resource, int amount);
-
-//     const std::vector<Road>& getRoads() const;
-//     const std::vector<Settlement>& getSettlements() const;
-//     bool hasRoadAt(int place) const;
-// };
-
-// } // namespace ariel
-
-// #endif // PLAYER_HPP
 #ifndef PLAYER_HPP
 #define PLAYER_HPP
 
@@ -84,18 +13,21 @@
 #include "development_card.hpp"
 #include "resource.hpp"
 #include "board.hpp"
+#include "city.hpp"
 
 namespace ariel {
 
 class Board;
 class DevelopmentCard;
 class Catan;
+class City;
 
 class Player {
 private:
     std::string name;
     std::vector<Settlement> settlements; // List of settlements owned by the player
     std::vector<Road> roads; // List of roads owned by the player
+    std::vector<City> cities;
     std::map<Resource, int> resources; // Map to track resources owned by the player
     std::vector<std::shared_ptr<DevelopmentCard>> developmentCards; // List of development cards owned by the player
     int points; // Player's total points
@@ -114,7 +46,8 @@ public:
     bool canPlaceSettlement(int point, const Board& board) const;
     void placeRoad(int startPoint, int endPoint, Board& board);
     bool canPlaceRoad(int startPoint, int endPoint, const Board& board) const;
-    void rollDice();
+    // void rollDice(Catan& catan);
+    // void distributeResources(Board& board, int roll);
     void endTurn();
     void trade(Player& other, const std::string& give, const std::string& receive, int giveAmount, int receiveAmount); // Use Resource enum here
     void buyDevelopmentCard(std::shared_ptr<DevelopmentCard> card);
@@ -135,6 +68,7 @@ public:
     // Functions for managing settlements and cities
     void addSettlement(int point);
     bool hasSettlement(int point) const;
+    bool hasCityAt(int point) const;
     void addCity(int point, Board& board);
     bool hasSettlementOrCity(int point) const;
 
@@ -152,13 +86,17 @@ public:
     const std::vector<Road>& getRoads() const;
     const std::vector<Settlement>& getSettlements() const;
     bool hasRoadAt(int point) const;
+    bool hasSettlementAt(int point) const; // New method declaration
+    int numSettlementsAt(int point) const;
 
     void addPoints(int points);
 
-     // Getter for resources
+    // Getter for resources
     const std::map<Resource, int>& getResources() const {
         return resources;
     }
+
+    std::string resourceToString(Resource resource);
 
 
 
