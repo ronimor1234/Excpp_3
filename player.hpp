@@ -79,6 +79,7 @@ namespace ariel {
         void addResource(Resource resource, int amount);
         void removeResource(Resource resource, int amount);
         const std::map<Resource, int>& getResources() const;
+        Resource stringToResource(const std::string& resourceStr);
 
         // Getters for settlements and roads
         const std::vector<Road>& getRoads() const;
@@ -96,6 +97,9 @@ namespace ariel {
 
         // print status of the player
         void printStatus();
+
+        //get to knightCount
+        int getknightCount() {return knightCount;}
     };
 
 } // namespace ariel

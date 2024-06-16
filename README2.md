@@ -2,6 +2,9 @@
 //ID: 208018028, Mail: ronimordechai70@gmail.com
 # Catan Game Project
 
+![Catan Board](catanBoard_cpp.jpg)
+
+
 Welcome to the Catan Game Project, a C++ implementation of the popular board game "Catan". This README provides a comprehensive guide to the project, explaining its structure, components, key gameplay features, and usage instructions.
 
 ## Table of Contents

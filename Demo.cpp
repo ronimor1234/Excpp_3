@@ -201,7 +201,7 @@ int main() {
         std::cerr << "Cannot use development card: " << e.what() << std::endl;
     }
 
-     // Print resources after using Monopoly Card
+    // Print resources after using Monopoly Card
     cout << "Player 3 resources after using Monopoly Card:" << endl;
     cout << "Brick: " << p3.getResource(Resource::Brick) << endl;
     cout << "Wood: " << p3.getResource(Resource::Wood) << endl;

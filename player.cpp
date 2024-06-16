@@ -10,6 +10,7 @@
 #include "development_card.hpp"
 #include <string>
 #include <random>
+#include <unordered_map>
 
 namespace ariel {
 
@@ -120,17 +121,39 @@ namespace ariel {
 
     // Trade resources with another player
     void Player::trade(Player& other, const std::string& give, const std::string& receive, int giveAmount, int receiveAmount) {
-        Resource giveResource = Resource::Wood; // Placeholder, convert string to Resource enum
-        Resource receiveResource = Resource::Brick; // Placeholder, convert string to Resource enum
+        try {
+            Resource giveResource = stringToResource(give);
+            Resource receiveResource = stringToResource(receive);
 
-        if (resources[giveResource] >= giveAmount && other.resources[receiveResource] >= receiveAmount) {
-            resources[giveResource] -= giveAmount;
-            other.resources[receiveResource] -= receiveAmount;
-            resources[receiveResource] += receiveAmount;
-            other.resources[giveResource] += giveAmount;
-            std::cout << name << " traded " << giveAmount << " " << give << " for " << receiveAmount << " " << receive << " with " << other.getName() << "." << std::endl;
+            if (resources[giveResource] >= giveAmount && other.resources[receiveResource] >= receiveAmount) {
+                resources[giveResource] -= giveAmount;
+                other.resources[receiveResource] -= receiveAmount;
+                resources[receiveResource] += receiveAmount;
+                other.resources[giveResource] += giveAmount;
+                std::cout << name << " traded " << giveAmount << " " << give << " for " << receiveAmount << " " << receive << " with " << other.getName() << "." << std::endl;
+            } else {
+                std::cerr << "Trade failed due to insufficient resources." << std::endl;
+            }
+        } catch (const std::invalid_argument& e) {
+            std::cerr << "Trade failed due to invalid resource type: " << e.what() << std::endl;
+        }
+    }
+
+    // Helper function to convert string to Resource enum
+    Resource Player::stringToResource(const std::string& resourceStr) {
+        static const std::unordered_map<std::string, Resource> resourceMap = {
+            {"wood", Resource::Wood},
+            {"brick", Resource::Brick},
+            {"sheep", Resource::Sheep},
+            {"wheat", Resource::Wheat},
+            {"ore", Resource::Ore}
+        };
+
+        auto it = resourceMap.find(resourceStr);
+        if (it != resourceMap.end()) {
+            return it->second;
         } else {
-            std::cerr << "Trade failed due to insufficient resources." << std::endl;
+            throw std::invalid_argument("Invalid resource string");
         }
     }
 
